@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌿 Terrário Temporal — Mata Atlântica</title>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Special+Elite&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --verde-musgo: #5A7247;
+  --verde-claro: #8A9A5B;
+  --verde-escuro: #2F3A28;
+  --verde-borda: #3D4F35;
+  --creme: #E8EDE0;
+  --creme-escuro: #D4D9C8;
+  --mostarda: #D4C685;
+  --texto: #1F2A18;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Courier Prime', monospace;
+  background: var(--creme);
+  color: var(--texto);
+  min-height: 100vh;
+  background-image: 
+    radial-gradient(circle at 20% 50%, rgba(90,114,71,0.08) 0%, transparent 50%),
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(90,114,71,0.02) 2px, rgba(90,114,71,0.02) 4px);
+}
+
+/* NAV */
+.nav-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background: var(--verde-escuro);
+  border-bottom: 3px solid var(--verde-borda);
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 1000;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+}
+
+.nav-dots { display: flex; gap: 6px; }
+.nav-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--verde-borda); }
+.nav-dot.red { background: #c75450; }
+.nav-dot.yellow { background: #e8c84a; }
+.nav-dot.green { background: #6ba368; }
+
+.nav-title {
+  font-family: 'VT323', monospace;
+  color: var(--creme);
+  font-size: 18px;
+  margin-left: 12px;
+  letter-spacing: 1px;
+}
+
+.nav-links { margin-left: auto; display: flex; gap: 4px; }
+
+.nav-btn {
+  font-family: 'VT323', monospace;
+  background: var(--verde-musgo);
+  color: var(--creme);
+  border: 2px outset var(--verde-claro);
+  padding: 4px 14px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.1s;
+}
+.nav-btn:hover { background: var(--verde-claro); }
+.nav-btn:active { border-style: inset; transform: translate(1px,1px); }
+.nav-btn.active { background: var(--mostarda); color: var(--verde-escuro); border-style: inset; }
+
+main { margin-top: 50px; padding: 20px; }
+.section { display: none; animation: fadeIn 0.4s; }
+.section.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* HERO */
+.hero-window {
+  max-width: 900px;
+  margin: 40px auto;
+  background: var(--creme);
+  border: 3px solid var(--verde-escuro);
+  box-shadow: 8px 8px 0 var(--verde-borda), inset 0 0 0 2px var(--creme-escuro);
+}
+
+.window-header {
+  background: linear-gradient(90deg, var(--verde-musgo), var(--verde-claro));
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 2px solid var(--verde-borda);
+}
+
+.window-header .dots { display: flex; gap: 4px; }
+.window-header .dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid var(--verde-borda); }
+.window-header .dot:nth-child(1) { background: #ff5f56; }
+.window-header .dot:nth-child(2) { background: #ffbd2e; }
+.window-header .dot:nth-child(3) { background: #27c93f; }
+
+.window-title {
+  font-family: 'VT323', monospace;
+  color: var(--creme);
+  font-size: 16px;
+  margin-left: 8px;
+  letter-spacing: 1px;
+}
+
+.window-body { padding: 30px; }
+
+.hero-title {
+  font-family: 'VT323', monospace;
+  font-size: 52px;
+  color: var(--verde-escuro);
+  line-height: 1;
+  margin-bottom: 8px;
+  text-shadow: 3px 3px 0 var(--verde-claro);
+}
+
+.hero-subtitle {
+  font-family: 'Special Elite', cursive;
+  font-size: 20px;
+  color: var(--verde-musgo);
+  margin-bottom: 24px;
+  font-style: italic;
+}
+
+.hero-text {
+  font-size: 15px;
+  line-height: 1.7;
+  margin-bottom: 20px;
+  max-width: 700px;
+}
+
+.hero-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin: 30px 0;
+}
+
+.feature-card {
+  background: var(--creme-escuro);
+  border: 2px solid var(--verde-borda);
+  padding: 16px;
+  box-shadow: 4px 4px 0 var(--verde-musgo);
+}
+
+.feature-card h3 {
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  color: var(--verde-escuro);
+  margin-bottom: 8px;
+}
+
+.feature-card p { font-size: 13px; line-height: 1.5; }
+
+.cta-button {
+  font-family: 'VT323', monospace;
+  font-size: 24px;
+  background: var(--verde-musgo);
+  color: var(--creme);
+  border: 3px outset var(--verde-claro);
+  padding: 14px 36px;
+  cursor: pointer;
+  margin-top: 16px;
+  transition: all 0.15s;
+  letter-spacing: 2px;
+}
+.cta-button:hover {
+  background: var(--verde-claro);
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--verde-escuro);
+}
+.cta-button:active { border-style: inset; transform: translate(1px,1px); }
+
+/* TERRÁRIO */
+.terrarium-container { max-width: 1100px; margin: 20px auto; }
+
+.period-selector {
+  background: var(--verde-escuro);
+  border: 3px solid var(--verde-borda);
+  padding: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  box-shadow: 4px 4px 0 var(--verde-escuro);
+}
+
+.period-label {
+  font-family: 'VT323', monospace;
+  color: var(--mostarda);
+  font-size: 18px;
+  margin-right: 8px;
+}
+
+.period-btn {
+  font-family: 'VT323', monospace;
+  background: var(--creme);
+  color: var(--verde-escuro);
+  border: 2px outset var(--creme-escuro);
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.1s;
+}
+.period-btn:hover { background: var(--mostarda); }
+.period-btn.active { background: var(--mostarda); border-style: inset; color: var(--verde-escuro); font-weight: bold; }
+
+.terrarium-window {
+  background: var(--creme);
+  border: 3px solid var(--verde-escuro);
+  box-shadow: 8px 8px 0 var(--verde-borda);
+  overflow: hidden;
+}
+
+.terrarium-header {
+  background: linear-gradient(90deg, var(--verde-musgo), var(--verde-claro));
+  padding: 8px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid var(--verde-borda);
+}
+
+.terrarium-title {
+  font-family: 'VT323', monospace;
+  color: var(--creme);
+  font-size: 18px;
+}
+
+.terrarium-controls { display: flex; gap: 8px; }
+
+.control-btn {
+  font-family: 'VT323', monospace;
+  background: var(--creme);
+  color: var(--verde-escuro);
+  border: 2px outset var(--creme-escuro);
+  padding: 4px 12px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.control-btn:active { border-style: inset; }
+
+#terrariumCanvas {
+  display: block;
+  width: 100%;
+  height: 550px;
+  background: linear-gradient(180deg, #a8c4a0 0%, #8fa888 30%, #6d8a66 60%, #4a6644 100%);
+  cursor: crosshair;
+}
+
+.terrarium-info {
+  padding: 12px 16px;
+  background: var(--creme-escuro);
+  border-top: 2px solid var(--verde-borda);
+  font-size: 13px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.info-item {
+  font-family: 'VT323', monospace;
+  color: var(--verde-escuro);
+  font-size: 16px;
+}
+.info-item span { color: var(--verde-musgo); }
+
+/* MODAL */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(31,42,24,0.7);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+.modal-overlay.active { display: flex; }
+
+.modal-window {
+  background: var(--creme);
+  border: 3px solid var(--verde-escuro);
+  box-shadow: 12px 12px 0 var(--verde-borda);
+  max-width: 600px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  animation: modalIn 0.3s;
+}
+
+@keyframes modalIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modal-header {
+  background: linear-gradient(90deg, var(--verde-musgo), var(--verde-claro));
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid var(--verde-borda);
+}
+
+.modal-title {
+  font-family: 'VT323', monospace;
+  color: var(--creme);
+  font-size: 20px;
+}
+
+.modal-close {
+  background: var(--creme);
+  color: var(--verde-escuro);
+  border: 2px outset var(--creme-escuro);
+  width: 28px; height: 28px;
+  cursor: pointer;
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  line-height: 1;
+}
+.modal-close:active { border-style: inset; }
+
+.modal-body { padding: 24px; }
+
+.species-header {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.species-image {
+  width: 180px;
+  height: 180px;
+  background: var(--creme-escuro);
+  border: 2px solid var(--verde-borda);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 80px;
+  flex-shrink: 0;
+}
+
+.species-info h2 {
+  font-family: 'VT323', monospace;
+  font-size: 32px;
+  color: var(--verde-escuro);
+  font-style: italic;
+}
+
+.species-info .popular-name {
+  font-family: 'Special Elite', cursive;
+  color: var(--verde-musgo);
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+.species-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.tag {
+  font-family: 'VT323', monospace;
+  background: var(--verde-musgo);
+  color: var(--creme);
+  padding: 3px 10px;
+  font-size: 14px;
+  border: 1px solid var(--verde-borda);
+}
+
+.species-section {
+  margin: 20px 0;
+}
+
+.species-section h3 {
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  color: var(--verde-escuro);
+  border-bottom: 2px solid var(--verde-claro);
+  padding-bottom: 4px;
+  margin-bottom: 10px;
+}
+
+.species-section p {
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.references-list {
+  list-style: none;
+  padding: 0;
+}
+
+.references-list li {
+  font-size: 12px;
+  padding: 6px 8px;
+  margin: 4px 0;
+  background: var(--creme-escuro);
+  border-left: 3px solid var(--verde-musgo);
+  line-height: 1.5;
+}
+
+/* BLOG */
+.blog-container { max-width: 800px; margin: 20px auto; }
+
+.blog-post {
+  background: var(--creme);
+  border: 3px solid var(--verde-escuro);
+  margin-bottom: 24px;
+  box-shadow: 6px 6px 0 var(--verde-borda);
+}
+
+.blog-post-header {
+  background: linear-gradient(90deg, var(--verde-musgo), var(--verde-claro));
+  padding: 12px 16px;
+  border-bottom: 2px solid var(--verde-borda);
+}
+
+.blog-post-title {
+  font-family: 'VT323', monospace;
+  color: var(--creme);
+  font-size: 24px;
+}
+
+.blog-post-meta {
+  font-size: 12px;
+  color: var(--creme-escuro);
+  margin-top: 4px;
+}
+
+.blog-post-body {
+  padding: 24px;
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.blog-post-body p { margin-bottom: 14px; }
+
+/* ADMIN */
+.admin-container { max-width: 900px; margin: 20px auto; }
+
+.admin-form {
+  background: var(--creme);
+  border: 3px solid var(--verde-escuro);
+  padding: 24px;
+  box-shadow: 8px 8px 0 var(--verde-borda);
+  margin-bottom: 24px;
+}
+
+.form-group { margin-bottom: 16px; }
+
+.form-group label {
+  display: block;
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  color: var(--verde-escuro);
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  font-family: 'Courier Prime', monospace;
+  font-size: 14px;
+  padding: 8px 10px;
+  border: 2px inset var(--creme-escuro);
+  background: var(--creme);
+  color: var(--texto);
+}
+
+.form-group textarea { min-height: 100px; resize: vertical; }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.submit-btn {
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  background: var(--verde-musgo);
+  color: var(--creme);
+  border: 3px outset var(--verde-claro);
+  padding: 10px 28px;
+  cursor: pointer;
+  letter-spacing: 1px;
+}
+.submit-btn:hover { background: var(--verde-claro); }
+.submit-btn:active { border-style: inset; }
+
+.species-list {
+  background: var(--creme);
+  border: 3px solid var(--verde-escuro);
+  padding: 16px;
+  box-shadow: 6px 6px 0 var(--verde-borda);
+}
+
+.species-list h3 {
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  color: var(--verde-escuro);
+  margin-bottom: 12px;
+  border-bottom: 2px solid var(--verde-claro);
+  padding-bottom: 6px;
+}
+
+.species-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--creme-escuro);
+  margin: 6px 0;
+  border-left: 4px solid var(--verde-musgo);
+  font-size: 14px;
+}
+
+.species-item .name {
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  color: var(--verde-escuro);
+}
+
+.delete-btn {
+  background: #c75450;
+  color: var(--creme);
+  border: 2px outset #d9706c;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+}
+.delete-btn:active { border-style: inset; }
+
+footer {
+  text-align: center;
+  padding: 30px 20px;
+  font-family: 'VT323', monospace;
+  color: var(--verde-musgo);
+  font-size: 14px;
+  border-top: 3px solid var(--verde-borda);
+  margin-top: 60px;
+  background: var(--creme-escuro);
+}
+
+@media (max-width: 768px) {
+  .hero-title { font-size: 36px; }
+  .form-row { grid-template-columns: 1fr; }
+  .species-header { flex-direction: column; }
+  .species-image { width: 100%; height: 200px; }
+  #terrariumCanvas { height: 400px; }
+}
+
+::-webkit-scrollbar { width: 12px; }
+::-webkit-scrollbar-track { background: var(--creme-escuro); }
+::-webkit-scrollbar-thumb { background: var(--verde-musgo); border: 2px solid var(--verde-borda); }
+::-webkit-scrollbar-thumb:hover { background: var(--verde-claro); }
+</style>
+</head>
+<body>
+
+<nav class="nav-bar">
+  <div class="nav-dots">
+    <div class="nav-dot red"></div>
+    <div class="nav-dot yellow"></div>
+    <div class="nav-dot green"></div>
+  </div>
+  <div class="nav-title">🌿 TERRÁRIO TEMPORAL v1.0</div>
+  <div class="nav-links">
+    <button class="nav-btn active" data-section="home">INÍCIO</button>
+    <button class="nav-btn" data-section="terrarium">TERRÁRIO</button>
+    <button class="nav-btn" data-section="blog">TEXTOS</button>
+    <button class="nav-btn" data-section="admin">ADMIN</button>
+  </div>
+</nav>
+
+<main>
+  <!-- HOME -->
+  <section id="home" class="section active">
+    <div class="hero-window">
+      <div class="window-header">
+        <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="window-title">bem-vindo.exe</div>
+      </div>
+      <div class="window-body">
+        <h1 class="hero-title">TERRÁRIO TEMPORAL</h1>
+        <p class="hero-subtitle">— uma janela para a Mata Atlântica através do tempo geológico —</p>
+        
+        <p class="hero-text">
+          Este é um projeto de divulgação científica que une <strong>biologia, paleontologia e animação</strong>. 
+          Aqui você pode observar como era a Mata Atlântica em diferentes períodos geológicos, 
+          desde os fósseis mais antigos que temos no Brasil até a biodiversidade atual.
+        </p>
+        <p class="hero-text">
+          Clique nos organismos para ver fichas científicas completas com ilustrações, 
+          descrições ecológicas e referências acadêmicas.
+        </p>
+
+        <div class="hero-features">
+          <div class="feature-card">
+            <h3>🦕 PERÍODOS GEOLÓGICOS</h3>
+            <p>Viaje do Triássico ao Holoceno. Veja como o bioma mudou ao longo de 250 milhões de anos.</p>
+          </div>
+          <div class="feature-card">
+            <h3>🌿 FAUNA & FLORA</h3>
+            <p>Organismos animados interagem no terrário. Clique para descobrir cada espécie.</p>
+          </div>
+          <div class="feature-card">
+            <h3>📚 BASE CIENTÍFICA</h3>
+            <p>Toda informação vem de artigos e publicações acadêmicas. Referências incluídas.</p>
+          </div>
+        </div>
+
+        <button class="cta-button" onclick="showSection('terrarium')">▶ ENTRAR NO TERRÁRIO</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TERRÁRIO -->
+  <section id="terrarium" class="section">
+    <div class="terrarium-container">
+      <div class="period-selector">
+        <span class="period-label">PERÍODO:</span>
+        <button class="period-btn" data-period="triassico">TRIÁSSICO</button>
+        <button class="period-btn" data-period="cretaceo">CRETÁCEO</button>
+        <button class="period-btn" data-period="paleogeno">PALEÓGENO</button>
+        <button class="period-btn" data-period="neogeno">NEÓGENO</button>
+        <button class="period-btn" data-period="pleistoceno">PLEISTOCENO</button>
+        <button class="period-btn active" data-period="atual">ATUAL</button>
+      </div>
+
+      <div class="terrarium-window">
+        <div class="terrarium-header">
+          <div class="terrarium-title" id="terrariumTitle">🌳 MATA ATLÂNTICA — HOLOCENO (ATUAL)</div>
+          <div class="terrarium-controls">
+            <button class="control-btn" id="pauseBtn">⏸ PAUSAR</button>
+            <button class="control-btn" id="resetBtn">↻ RESETAR</button>
+          </div>
+        </div>
+        <canvas id="terrariumCanvas"></canvas>
+        <div class="terrarium-info">
+          <div class="info-item">ORGANISMOS: <span id="orgCount">0</span></div>
+          <div class="info-item">PERÍODO: <span id="periodInfo">Holoceno</span></div>
+          <div class="info-item">CLIMA: <span id="climateInfo">Subtropical úmido</span></div>
+          <div class="info-item">💡 clique num organismo para ver a ficha</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOG -->
+  <section id="blog" class="section">
+    <div class="blog-container">
+      <div class="hero-window" style="margin-bottom: 30px;">
+        <div class="window-header">
+          <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+          <div class="window-title">textos_e_ensaios.txt</div>
+        </div>
+        <div class="window-body">
+          <h1 class="hero-title" style="font-size: 36px;">TEXTOS & ENSAIOS</h1>
+          <p class="hero-subtitle">reflexões sobre biologia, ensino e divulgação científica</p>
+        </div>
+      </div>
+
+      <article class="blog-post">
+        <div class="blog-post-header">
+          <h2 class="blog-post-title">Por que a Mata Atlântica é um laboratório paleontológico único?</h2>
+          <div class="blog-post-meta">publicado em 15/03/2025 · categoria: paleontologia</div>
+        </div>
+        <div class="blog-post-body">
+          <p>A Mata Atlântica é um dos biomas mais biodiversos do planeta, mas poucos sabem que ela também guarda fósseis de períodos geológicos muito antigos. Desde o Triássico Superior, quando o supercontinente Gondwana começava a se fragmentar, a região que hoje abriga a floresta atlântica já era palco de uma fauna fascinante.</p>
+          <p>Neste texto, vou explorar como os registros fósseis do sul e sudeste do Brasil nos ajudam a reconstruir ecossistemas inteiros que existiram há mais de 200 milhões de anos.</p>
+        </div>
+      </article>
+
+      <article class="blog-post">
+        <div class="blog-post-header">
+          <h2 class="blog-post-title">Animando a ciência: como nascem os sprites do terrário</h2>
+          <div class="blog-post-meta">publicado em 02/03/2025 · categoria: processo criativo</div>
+        </div>
+        <div class="blog-post-body">
+          <p>Cada organismo que aparece no terrário temporal passa por um processo de pesquisa e ilustração. Primeiro, busco as publicações mais recentes sobre a espécie. Depois, estudo a anatomia a partir de descrições fósseis e reconstruções científicas.</p>
+          <p>Só então começo a desenhar os sprites — geralmente em folhas de sprite com múltiplos frames para cada ação: idle, andar, comer, interagir.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ADMIN -->
+  <section id="admin" class="section">
+    <div class="admin-container">
+      <div class="hero-window" style="margin-bottom: 30px;">
+        <div class="window-header">
+          <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+          <div class="window-title">painel_de_controle.exe</div>
+        </div>
+        <div class="window-body">
+          <h1 class="hero-title" style="font-size: 36px;">PAINEL ADMIN</h1>
+          <p class="hero-subtitle">adicione novas espécies ao terrário</p>
+        </div>
+      </div>
+
+      <div class="admin-form">
+        <h3 style="font-family: 'VT323', monospace; font-size: 24px; color: var(--verde-escuro); margin-bottom: 16px;">
+          ➕ ADICIONAR NOVA ESPÉCIE
+        </h3>
+        <form id="speciesForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nome científico:</label>
+              <input type="text" id="spScientific" placeholder="ex: Panthera onca" required>
+            </div>
+            <div class="form-group">
+              <label>Nome popular:</label>
+              <input type="text" id="spPopular" placeholder="ex: Onça-pintada">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Período geológico:</label>
+              <select id="spPeriod">
+                <option value="triassico">Triássico</option>
+                <option value="cretaceo">Cretáceo</option>
+                <option value="paleogeno">Paleógeno</option>
+                <option value="neogeno">Neógeno</option>
+                <option value="pleistoceno">Pleistoceno</option>
+                <option value="atual" selected>Atual (Holoceno)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Tipo:</label>
+              <select id="spType">
+                <option value="animal">Animal</option>
+                <option value="planta">Planta</option>
+                <option value="fungo">Fungo</option>
+                <option value="outro">Outro</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Emoji/Ícone:</label>
+              <input type="text" id="spEmoji" placeholder="ex: 🐆" maxlength="4">
+            </div>
+            <div class="form-group">
+              <label>Tamanho:</label>
+              <input type="text" id="spSize" placeholder="ex: até 120kg, 1.5m">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Dieta/Ecologia:</label>
+            <input type="text" id="spDiet" placeholder="ex: Carnívora, predadora de topo">
+          </div>
+
+          <div class="form-group">
+            <label>Descrição:</label>
+            <textarea id="spDescription" placeholder="Descreva a espécie, seu comportamento, habitat..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Referências (uma por linha):</label>
+            <textarea id="spReferences" placeholder="AUTOR, A. (ano). Título do artigo. Revista, vol.&#10;OUTRO AUTOR, B. (ano). Livro..."></textarea>
+          </div>
+
+          <button type="submit" class="submit-btn">💾 SALVAR ESPÉCIE</button>
+        </form>
+      </div>
+
+      <div class="species-list">
+        <h3>📋 ESPÉCIES CADASTRADAS</h3>
+        <div id="speciesListContainer"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="speciesModal">
+  <div class="modal-window">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">FICHA DA ESPÉCIE</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<footer>
+  🌿 TERRÁRIO TEMPORAL DA MATA ATLÂNTICA · feito com 💚 por @jaunplz · 2025<br>
+  <span style="font-size: 12px; opacity: 0.7;">[ um projeto de divulgação científica em construção ]</span>
+</footer>
+
+<script>
+// DADOS INICIAIS
+const defaultSpecies = [
+  {
+    id: 1,
+    scientific: "Panthera onca",
+    popular: "Onça-pintada",
+    period: "atual",
+    type: "animal",
+    emoji: "🐆",
+    size: "até 120kg, 1.5m",
+    diet: "Carnívora — predadora de topo",
+    description: "Maior felino das Américas. Habita florestas tropicais e é fundamental para o equilíbrio ecológico da Mata Atlântica. Solitária, territorial e excelente nadadora.",
+    references: [
+      "SUNQUIST, M.; SUNQUIST, F. (2002). Wild Cats of the World. University of Chicago Press.",
+      "CULLEN Jr., L. et al. (2005). Ecologia e conservação da onça-pintada no Parque Nacional do Iguaçu."
+    ]
+  },
+  {
+    id: 2,
+    scientific: "Leontopithecus chrysomelas",
+    popular: "Mico-leão-de-cara-dourada",
+    period: "atual",
+    type: "animal",
+    emoji: "🐒",
+    size: "cerca de 600g, 26cm",
+    diet: "Onívora — frutas, insetos, pequenos vertebrados",
+    description: "Primata endêmico da Mata Atlântica do sul da Bahia. Um dos mamíferos mais ameaçados do Brasil, com menos de 1000 indivíduos na natureza.",
+    references: [
+      "RYLANDS, A.B. et al. (2002). The biology and conservation of wild primates in Brazil.",
+      "KIERULFF, M.C.M. et al. (2002). Golden-headed lion tamarin conservation. IUCN."
+    ]
+  },
+  {
+    id: 3,
+    scientific: "Araucaria angustifolia",
+    popular: "Pinheiro-do-Paraná",
+    period: "atual",
+    type: "planta",
+    emoji: "🌲",
+    size: "até 35m de altura",
+    diet: "Gimnosperma — fotossintetizante",
+    description: "Conífera símbolo da Floresta com Araucárias, sub-região da Mata Atlântica. Espécie-chave que alimenta dezenas de animais, especialmente a gralha-azul.",
+    references: [
+      "VIEIRA, R.F. (2003). Conservação de Araucaria angustifolia. Embrapa.",
+      "REITZ, R. et al. (1978). Projeto Madeira do Rio Grande do Sul."
+    ]
+  },
+  {
+    id: 4,
+    scientific: "Smilodon populator",
+    popular: "Dente-de-sabre sul-americano",
+    period: "pleistoceno",
+    type: "animal",
+    emoji: "🐯",
+    size: "até 400kg, 1.2m na cernelha",
+    diet: "Hiper-carnívora — megaherbívoros",
+    description: "O maior felino que já existiu. Viveu na América do Sul durante o Pleistoceno. Seus caninos de até 28cm eram usados para cortar a garganta de presas grandes.",
+    references: [
+      "LUND, P.W. (1842). Coup d'oeil sur les espèces éteintes de mammifères du Brésil.",
+      "CHRISTIANSEN, P. (2008). Evolution of skull and mandible shape in cats. PLoS ONE."
+    ]
+  },
+  {
+    id: 5,
+    scientific: "Eremotherium laurillardi",
+    popular: "Preguiça-gigante",
+    period: "pleistoceno",
+    type: "animal",
+    emoji: "🦥",
+    size: "até 6 toneladas, 6m de comprimento",
+    diet: "Herbívora — folhas, galhos, frutas",
+    description: "Uma das maiores preguiças terrestres que já existiu. Vivia em áreas abertas e florestas da América do Sul. Extinta há cerca de 10.000 anos.",
+    references: [
+      "CARTELLE, C. (1994). Edentata e megamamíferos herbívoros extintos da Toca dos Ossos.",
+      "DE IULIIS, G. et al. (2000). A new species of Eremotherium. Journal of Vertebrate Paleontology."
+    ]
+  },
+  {
+    id: 6,
+    scientific: "Staurikosaurus pricei",
+    popular: "Lagarto da cruz do sul",
+    period: "triassico",
+    type: "animal",
+    emoji: "🦎",
+    size: "cerca de 2m de comprimento, 30kg",
+    diet: "Carnívora — pequenos répteis e insetos",
+    description: "Um dos dinossauros mais antigos do mundo! Descoberto em Santa Maria (RS), viveu no Triássico Superior há cerca de 225 milhões de anos. Bípede e ágil.",
+    references: [
+      "COLBERT, E.H. (1970). A new theropod dinosaur from South America. Breviora, 350.",
+      "BITTENCOURT, J.S.; KELLNER, A.W.A. (2009). Anatomical and phylogenetic analysis of Staurikosaurus. Zootaxa."
+    ]
+  },
+  {
+    id: 7,
+    scientific: "Exaeretodon riograndensis",
+    popular: "Exaeretodonte",
+    period: "triassico",
+    type: "animal",
+    emoji: "🐊",
+    size: "cerca de 1.5m, herbívoro robusto",
+    diet: "Herbívora — vegetação rasteira",
+    description: "Cinodonte herbívoro do Triássico Superior do Rio Grande do Sul. Parente distante dos mamíferos, com dentes especializados para mastigar plantas.",
+    references: [
+      "ABDALA, F. et al. (2002). The non-mammalian cynodonts from the Triassic of Brazil.",
+      "BONAPARTE, J.F. (1962). Sobre el cráneo de Exaeretodon. Acta Geológica Lilloana."
+    ]
+  },
+  {
+    id: 8,
+    scientific: "Santanaraptor placidus",
+    popular: "Ladrão de Santana",
+    period: "cretaceo",
+    type: "animal",
+    emoji: "🦖",
+    size: "cerca de 1.5m, 15kg",
+    diet: "Carnívora — pequenos animais",
+    description: "Dinossauro terópode do Cretáceo Inferior da Formação Santana (CE). Importante por preservar impressões de tecidos moles, incluindo possíveis penas.",
+    references: [
+      "KELLNER, A.W.A. (1999). Short note on a new dinosaur from the Santana Formation.",
+      "NAVAS, L.M. et al. (2008). New information on Santanaraptor. Zootaxa."
+    ]
+  }
+];
+
+// ESTADO
+let species = [];
+let currentPeriod = 'atual';
+let organisms = [];
+let paused = false;
+let animationId = null;
+let canvas, ctx;
+
+const periodInfo = {
+  triassico: { name: "Triássico Superior (~225 Ma)", climate: "Quente e semiárido", bgTop: "#c9a87c", bgBottom: "#8b6f47", ground: "#6b5234" },
+  cretaceo: { name: "Cretáceo (~100 Ma)", climate: "Tropical quente", bgTop: "#a8c4a0", bgBottom: "#6d8a66", ground: "#4a6644" },
+  paleogeno: { name: "Paleógeno (~50 Ma)", climate: "Subtropical úmido", bgTop: "#9ab89a", bgBottom: "#6a8a6a", ground: "#4a6644" },
+  neogeno: { name: "Neógeno (~10 Ma)", climate: "Tropical úmido", bgTop: "#8fa888", bgBottom: "#5a7a55", ground: "#3d5538" },
+  pleistoceno: { name: "Pleistoceno (~100 ka)", climate: "Variável, glaciações", bgTop: "#b8c4a8", bgBottom: "#7a8a6a", ground: "#5a6a4a" },
+  atual: { name: "Holoceno (Atual)", climate: "Subtropical úmido", bgTop: "#a8c4a0", bgBottom: "#6d8a66", ground: "#4a6644" }
+};
+
+// INICIALIZAÇÃO
+function init() {
+  loadSpecies();
+  setupNavigation();
+  setupPeriodSelector();
+  setupAdmin();
+  setupCanvas();
+  renderSpeciesList();
+}
+
+function loadSpecies() {
+  const stored = localStorage.getItem('terrarium_species');
+  if (stored) {
+    species = JSON.parse(stored);
+  } else {
+    species = [...defaultSpecies];
+    saveSpecies();
+  }
+}
+
+function saveSpecies() {
+  localStorage.setItem('terrarium_species', JSON.stringify(species));
+}
+
+function setupNavigation() {
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => showSection(btn.dataset.section));
+  });
+}
+
+function showSection(sectionId) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(sectionId).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.nav-btn[data-section="${sectionId}"]`).classList.add('active');
+  
+  if (sectionId === 'terrarium') {
+    setTimeout(() => { resizeCanvas(); startTerrarium(); }, 100);
+  } else {
+    stopTerrarium();
+  }
+  window.scrollTo(0, 0);
+}
+
+function setupPeriodSelector() {
+  document.querySelectorAll('.period-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentPeriod = btn.dataset.period;
+      updateTerrariumInfo();
+      spawnOrganisms();
+    });
+  });
+
+  document.getElementById('pauseBtn').addEventListener('click', togglePause);
+  document.getElementById('resetBtn').addEventListener('click', () => spawnOrganisms());
+}
+
+function updateTerrariumInfo() {
+  const info = periodInfo[currentPeriod];
+  document.getElementById('terrariumTitle').textContent = `🌳 MATA ATLÂNTICA — ${info.name}`;
+  document.getElementById('periodInfo').textContent = info.name;
+  document.getElementById('climateInfo').textContent = info.climate;
+}
+
+function setupCanvas() {
+  canvas = document.getElementById('terrariumCanvas');
+  ctx = canvas.getContext('2d');
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+  canvas.addEventListener('click', handleCanvasClick);
+  canvas.addEventListener('mousemove', handleCanvasHover);
+}
+
+function resizeCanvas() {
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width;
+  canvas.height = rect.height;
+}
+
+function startTerrarium() {
+  updateTerrariumInfo();
+  spawnOrganisms();
+  if (!animationId) animate();
+}
+
+function stopTerrarium() {
+  if (animationId) {
+    cancelAnimationFrame(animationId);
+    animationId = null;
+  }
+}
+
+function togglePause() {
+  paused = !paused;
+  document.getElementById('pauseBtn').textContent = paused ? '▶ RETOMAR' : '⏸ PAUSAR';
+}
+
+function spawnOrganisms() {
+  organisms = [];
+  const periodSpecies = species.filter(s => s.period === currentPeriod);
+  
+  if (periodSpecies.length === 0) return;
+
+  const count = Math.min(periodSpecies.length * 2, 15);
+  for (let i = 0; i < count; i++) {
+    const sp = periodSpecies[Math.floor(Math.random() * periodSpecies.length)];
+    organisms.push({
+      species: sp,
+      x: Math.random() * (canvas.width - 60) + 30,
+      y: canvas.height - 80 - Math.random() * 150,
+      vx: (Math.random() - 0.5) * 1.5,
+      vy: 0,
+      size: 30 + Math.random() * 20,
+      frame: 0,
+      direction: Math.random() > 0.5 ? 1 : -1,
+      state: 'idle',
+      stateTimer: 0
+    });
+  }
+  
+  document.getElementById('orgCount').textContent = organisms.length;
+}
+
+function animate() {
+  if (!paused) update();
+  draw();
+  animationId = requestAnimationFrame(animate);
+}
+
+function update() {
+  organisms.forEach(org => {
+    org.frame += 0.05;
+    org.stateTimer--;
+    
+    if (org.stateTimer <= 0) {
+      const r = Math.random();
+      if (r < 0.4) {
+        org.state = 'idle';
+        org.stateTimer = 60 + Math.random() * 60;
+      } else if (r < 0.8) {
+        org.state = 'walking';
+        org.direction = Math.random() > 0.5 ? 1 : -1;
+        org.stateTimer = 40 + Math.random() * 80;
+      } else {
+        org.state = 'eating';
+        org.stateTimer = 30 + Math.random() * 30;
+      }
+    }
+    
+    if (org.state === 'walking') {
+      org.x += org.vx * org.direction * 1.5;
+      org.y += Math.sin(org.frame * 2) * 0.5;
+    } else if (org.state === 'idle') {
+      org.y += Math.sin(org.frame) * 0.3;
+    }
+    
+    if (org.x < 20) { org.x = 20; org.direction = 1; }
+    if (org.x > canvas.width - 20) { org.x = canvas.width - 20; org.direction = -1; }
+    if (org.y < canvas.height - 250) org.y = canvas.height - 250;
+    if (org.y > canvas.height - 60) org.y = canvas.height - 60;
+  });
+}
+
+function draw() {
+  const info = periodInfo[currentPeriod];
+  
+  const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  grad.addColorStop(0, info.bgTop);
+  grad.addColorStop(0.6, info.bgBottom);
+  grad.addColorStop(1, info.ground);
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  ctx.fillStyle = currentPeriod === 'pleistoceno' ? 'rgba(255,255,220,0.3)' : 'rgba(255,240,180,0.4)';
+  ctx.beginPath();
+  ctx.arc(canvas.width - 100, 80, 50, 0, Math.PI * 2);
+  ctx.fill();
+  
+  ctx.fillStyle = 'rgba(60,80,50,0.3)';
+  ctx.beginPath();
+  ctx.moveTo(0, canvas.height - 150);
+  for (let x = 0; x <= canvas.width; x += 50) {
+    ctx.lineTo(x, canvas.height - 180 - Math.sin(x * 0.01) * 40 - Math.cos(x * 0.02) * 20);
+  }
+  ctx.lineTo(canvas.width, canvas.height);
+  ctx.lineTo(0, canvas.height);
+  ctx.fill();
+  
+  ctx.fillStyle = info.ground;
+  ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
+  
+  ctx.strokeStyle = '#3d5538';
+  ctx.lineWidth = 2;
+  for (let x = 0; x < canvas.width; x += 15) {
+    const h = 10 + Math.sin(x * 0.3) * 5;
+    ctx.beginPath();
+    ctx.moveTo(x, canvas.height - 50);
+    ctx.lineTo(x + 3, canvas.height - 50 - h);
+    ctx.stroke();
+  }
+  
+  organisms.forEach(org => drawOrganism(org));
+  
+  if (organisms.length === 0) {
+    ctx.fillStyle = 'rgba(255,255,255,0.8)';
+    ctx.font = '20px "VT323", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('Nenhuma espécie cadastrada para este período.', canvas.width / 2, canvas.height / 2);
+    ctx.fillText('Adicione espécies no painel ADMIN.', canvas.width / 2, canvas.height / 2 + 30);
+  }
+}
+
+function drawOrganism(org) {
+  const { species: sp, x, y, size, direction, state, frame } = org;
+  
+  ctx.save();
+  ctx.translate(x, y);
+  if (direction < 0) ctx.scale(-1, 1);
+  
+  ctx.fillStyle = 'rgba(0,0,0,0.2)';
+  ctx.beginPath();
+  ctx.ellipse(0, size * 0.6, size * 0.5, size * 0.15, 0, 0, Math.PI * 2);
+  ctx.fill();
+  
+  ctx.font = `${size}px serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  
+  let offsetY = 0;
+  if (state === 'walking') {
+    offsetY = Math.abs(Math.sin(frame * 3)) * 5;
+  } else if (state === 'eating') {
+    offsetY = Math.sin(frame * 4) * 3;
+  }
+  
+  ctx.fillText(sp.emoji, 0, -offsetY);
+  
+  if (state === 'eating') {
+    ctx.font = '14px serif';
+    ctx.fillText('✨', size * 0.4, -size * 0.3);
+  }
+  
+  ctx.restore();
+}
+
+function handleCanvasClick(e) {
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  
+  for (let org of organisms) {
+    const dx = x - org.x;
+    const dy = y - org.y;
+    if (Math.sqrt(dx*dx + dy*dy) < org.size * 0.7) {
+      showSpeciesModal(org.species);
+      return;
+    }
+  }
+}
+
+function handleCanvasHover(e) {
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  
+  let hovering = false;
+  for (let org of organisms) {
+    const dx = x - org.x;
+    const dy = y - org.y;
+    if (Math.sqrt(dx*dx + dy*dy) < org.size * 0.7) {
+      hovering = true;
+      break;
+    }
+  }
+  canvas.style.cursor = hovering ? 'pointer' : 'crosshair';
+}
+
+function showSpeciesModal(sp) {
+  const modal = document.getElementById('speciesModal');
+  const body = document.getElementById('modalBody');
+  document.getElementById('modalTitle').textContent = `📋 ${sp.popular || sp.scientific}`;
+  
+  body.innerHTML = `
+    <div class="species-header">
+      <div class="species-image">${sp.emoji || '🌿'}</div>
+      <div class="species-info">
+        <h2>${sp.scientific}</h2>
+        <div class="popular-name">${sp.popular || '—'}</div>
+        <div class="species-tags">
+          <span class="tag">${periodInfo[sp.period]?.name || sp.period}</span>
+          <span class="tag">${sp.type}</span>
+          ${sp.size ? `<span class="tag">${sp.size}</span>` : ''}
+        </div>
+      </div>
+    </div>
+    ${sp.diet ? `<div class="species-section"><h3>🍃 ECOLOGIA & DIETA</h3><p>${sp.diet}</p></div>` : ''}
+    ${sp.description ? `<div class="species-section"><h3>📖 DESCRIÇÃO</h3><p>${sp.description}</p></div>` : ''}
+    ${sp.references && sp.references.length > 0 ? `<div class="species-section"><h3>📚 REFERÊNCIAS</h3><ul class="references-list">${sp.references.map(r => `<li>${r}</li>`).join('')}</ul></div>` : ''}
+  `;
+  
+  modal.classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('speciesModal').classList.remove('active');
+}
+
+document.getElementById('speciesModal').addEventListener('click', (e) => {
+  if (e.target.id === 'speciesModal') closeModal();
+});
+
+function setupAdmin() {
+  document.getElementById('speciesForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const newSpecies = {
+      id: Date.now(),
+      scientific: document.getElementById('spScientific').value,
+      popular: document.getElementById('spPopular').value,
+      period: document.getElementById('spPeriod').value,
+      type: document.getElementById('spType').value,
+      emoji: document.getElementById('spEmoji').value || '🌿',
+      size: document.getElementById('spSize').value,
+      diet: document.getElementById('spDiet').value,
+      description: document.getElementById('spDescription').value,
+      references: document.getElementById('spReferences').value.split('\n').filter(r => r.trim())
+    };
+    
+    species.push(newSpecies);
+    saveSpecies();
+    renderSpeciesList();
+    
+    e.target.reset();
+    alert('✅ Espécie adicionada com sucesso! Ela aparecerá no terrário.');
+  });
+}
+
+function renderSpeciesList() {
+  const container = document.getElementById('speciesListContainer');
+  if (species.length === 0) {
+    container.innerHTML = '<p style="padding: 20px; text-align: center; color: var(--verde-musgo);">Nenhuma espécie cadastrada ainda.</p>';
+    return;
+  }
+  
+  container.innerHTML = species.map(sp => `
+    <div class="species-item">
+      <div>
+        <span style="font-size: 20px; margin-right: 8px;">${sp.emoji}</span>
+        <span class="name">${sp.scientific}</span>
+        <span style="color: var(--verde-musgo); margin-left: 8px; font-size: 12px;">— ${sp.popular || '—'}</span>
+        <span class="tag" style="margin-left: 8px;">${periodInfo[sp.period]?.name || sp.period}</span>
+      </div>
+      <button class="delete-btn" onclick="deleteSpecies(${sp.id})">🗑 REMOVER</button>
+    </div>
+  `).join('');
+}
+
+function deleteSpecies(id) {
+  if (confirm('Tem certeza que quer remover esta espécie?')) {
+    species = species.filter(s => s.id !== id);
+    saveSpecies();
+    renderSpeciesList();
+  }
+}
+
+window.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body>
+</html>
