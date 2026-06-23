@@ -57,12 +57,13 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // ==========================================
-        // SUAS CREDENCIAIS (JÁ CORRETAS)
+        // SUAS CREDENCIAIS (MANTIDAS)
         const SUPABASE_URL = 'https://vvrjpofqkksemwmqwxyi.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2cmpwb2Zxa2tzZW13bXF3eHlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjUwODIsImV4cCI6MjA5Nzc0MTA4Mn0.0EPKmEfvCscMaWxbXfsou5GestDWDPALJrhshIj9nww';
         // ==========================================
 
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // CORREÇÃO AQUI: Troquei o nome de 'supabase' para 'supabaseClient' para não conflitar com a biblioteca
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         function mostrarErro(msg) {
             const box = document.getElementById('error-box');
@@ -82,7 +83,8 @@
             }
 
             try {
-                const { data, error } = await supabase.auth.signInWithPassword({ email, password: senha });
+                // CORREÇÃO AQUI: Usando supabaseClient
+                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: senha });
                 
                 if (error) {
                     mostrarErro("Erro do Supabase: " + error.message);
@@ -105,7 +107,10 @@
             }
         }
 
-        function logout() { supabase.auth.signOut(); location.reload(); }
+        function logout() { 
+            supabaseClient.auth.signOut(); 
+            location.reload(); 
+        }
 
         async function salvarPost() {
             const titulo = document.getElementById('post-titulo').value;
@@ -114,23 +119,26 @@
             
             const fileImg = document.getElementById('post-imagem').files[0];
             if(fileImg) {
-                const { data, error } = await supabase.storage.from('uploads').upload(`post_img_${Date.now()}.png`, fileImg);
+                // CORREÇÃO AQUI: Usando supabaseClient
+                const { data, error } = await supabaseClient.storage.from('uploads').upload(`post_img_${Date.now()}.png`, fileImg);
                 if(!error) {
-                    const { data: url } = supabase.storage.from('uploads').getPublicUrl(data.path);
+                    const { data: url } = supabaseClient.storage.from('uploads').getPublicUrl(data.path);
                     imgUrl = url.publicUrl;
                 }
             }
             const filePdf = document.getElementById('post-pdf').files[0];
             if(filePdf) {
-                const { data, error } = await supabase.storage.from('uploads').upload(`post_pdf_${Date.now()}.pdf`, filePdf);
+                // CORREÇÃO AQUI: Usando supabaseClient
+                const { data, error } = await supabaseClient.storage.from('uploads').upload(`post_pdf_${Date.now()}.pdf`, filePdf);
                 if(!error) {
-                    const { data: url } = supabase.storage.from('uploads').getPublicUrl(data.path);
+                    const { data: url } = supabaseClient.storage.from('uploads').getPublicUrl(data.path);
                     pdfUrl = url.publicUrl;
                 }
             }
 
             const hoje = new Date().toISOString().slice(0,10);
-            await supabase.from('posts').insert([{ titulo, resumo, imagem_url: imgUrl, pdf_url: pdfUrl, data: hoje, likes: 0 }]);
+            // CORREÇÃO AQUI: Usando supabaseClient
+            await supabaseClient.from('posts').insert([{ titulo, resumo, imagem_url: imgUrl, pdf_url: pdfUrl, data: hoje, likes: 0 }]);
             alert('Post publicado com sucesso! Atualize seu blog para ver.');
             location.reload();
         }
@@ -141,15 +149,17 @@
             
             const files = document.getElementById('rascunho-imagens').files;
             for(let file of files) {
-                const { data, error } = await supabase.storage.from('uploads').upload(`rasc_img_${Date.now()}_${file.name}`, file);
+                // CORREÇÃO AQUI: Usando supabaseClient
+                const { data, error } = await supabaseClient.storage.from('uploads').upload(`rasc_img_${Date.now()}_${file.name}`, file);
                 if(!error) {
-                    const { data: url } = supabase.storage.from('uploads').getPublicUrl(data.path);
+                    const { data: url } = supabaseClient.storage.from('uploads').getPublicUrl(data.path);
                     imagensUrls.push(url.publicUrl);
                 }
             }
 
             const hoje = new Date().toISOString().slice(0,10);
-            await supabase.from('rascunhos').insert([{ texto, imagens: imagensUrls, data: hoje, likes: 0 }]);
+            // CORREÇÃO AQUI: Usando supabaseClient
+            await supabaseClient.from('rascunhos').insert([{ texto, imagens: imagensUrls, data: hoje, likes: 0 }]);
             alert('Rascunho publicado!');
             location.reload();
         }
