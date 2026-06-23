@@ -11,9 +11,13 @@ async function iniciar() {
         const { data } = await supabaseClient.from('config').select('*').eq('id', 1).maybeSingle();
         if (data) config = data;
 
-        // Busca dados
+        // Busca dados (SE FOR NULL, TRANSFORMA EM ARRAY VAZIO PARA NÃO QUEBRAR)
         const { data: posts } = await supabaseClient.from('posts').select('*').order('data', { ascending: false });
         const { data: rascunhos } = await supabaseClient.from('rascunhos').select('*').order('data', { ascending: false });
+
+        // CORREÇÃO AQUI: Garantir que posts e rascunhos nunca sejam null
+        const postsArray = posts || [];
+        const rascunhosArray = rascunhos || [];
 
         // Atualiza DOM
         document.title = config.blog_name;
@@ -30,17 +34,17 @@ async function iniciar() {
             const intro = document.getElementById('home-intro');
             if(intro && config.home_intro) intro.innerText = config.home_intro;
             const container = document.getElementById('home-carousel');
-            if(container && posts.length > 0) container.innerHTML = posts.slice(0,3).map(p => criarCardPost(p)).join('');
+            if(container && postsArray.length > 0) container.innerHTML = postsArray.slice(0,3).map(p => criarCardPost(p)).join('');
             else if(container) container.innerHTML = "<p style='color:#888;'>Nenhum post publicado ainda. Vá no admin!</p>";
         } else if (path.includes('posts')) {
             document.getElementById('page-title').innerText = config.page_title_posts;
             const container = document.getElementById('all-posts-list');
-            if(container && posts.length > 0) container.innerHTML = posts.map(p => criarCardPost(p, false)).join('');
+            if(container && postsArray.length > 0) container.innerHTML = postsArray.map(p => criarCardPost(p, false)).join('');
             else if(container) container.innerHTML = "<p style='color:#888;'>Nenhum post publicado ainda.</p>";
         } else if (path.includes('rascunhos')) {
             document.getElementById('page-title').innerText = config.page_title_rascunhos;
             const container = document.getElementById('rascunhos-timeline');
-            if(container && rascunhos.length > 0) container.innerHTML = rascunhos.map(r => criarTweetRascunho(r)).join('');
+            if(container && rascunhosArray.length > 0) container.innerHTML = rascunhosArray.map(r => criarTweetRascunho(r)).join('');
             else if(container) container.innerHTML = "<p style='color:#888;'>Nenhum rascunho postado ainda.</p>";
         }
     } catch (e) {
