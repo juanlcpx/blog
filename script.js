@@ -1,12 +1,10 @@
-// ==========================================
 const SUPABASE_URL = 'https://vvrjpofqkksemwmqwxyi.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2cmpwb2Zxa2tzZW13bXF3eHlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjUwODIsImV4cCI6MjA5Nzc0MTA4Mn0.0EPKmEfvCscMaWxbXfsou5GestDWDPALJrhshIj9nww';
-// ==========================================
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 async function carregarConfiguracao() {
-    const { data, error } = await supabaseClient.from('config').select('*').eq('id', 1).single();
-    if (error && error.code === 'PGRST116') return null; // Tabela vazia
+    const { data, error } = await supabaseClient.from('config').select('*').eq('id', 1).maybeSingle();
+    if (error) console.warn("Erro ao buscar config, usando padrões.", error);
     return data;
 }
 
@@ -19,12 +17,7 @@ async function carregarDados() {
 
 async function iniciar() {
     const dados = await carregarDados();
-    
-    // Se não existir config no banco, usa padrão
-    const config = dados.config || { 
-        blog_name: 'jaun', home_title: 'Últimos Artigos', home_intro: 'Hi, I\'m jaun. Welcome to my scientific blog.', 
-        page_title_posts: 'Posts', page_title_rascunhos: 'Rascunhos', footer_text: '' 
-    };
+    const config = dados.config || { blog_name: 'jaun', home_title: 'Últimos Artigos', home_intro: 'Hi, I\'m jaun.', page_title_posts: 'Posts', page_title_rascunhos: 'Rascunhos', footer_text: '' };
     
     const path = window.location.pathname;
     let pageSuffix = "Home";
@@ -32,23 +25,19 @@ async function iniciar() {
     else if (path.includes('rascunhos')) pageSuffix = config.page_title_rascunhos || "Rascunhos";
     
     document.title = config.blog_name + " - " + pageSuffix;
-
     const siteTitleEl = document.querySelector('.site-title');
     if(siteTitleEl) siteTitleEl.innerText = config.blog_name;
-
+    
     const footerEl = document.querySelector('footer p');
     if(footerEl) footerEl.innerText = config.footer_text || "";
 
     const h2Tags = document.querySelectorAll('main h2');
-
-    if (path.includes('index') || path === '/') {
+    if (path.includes('index') || path === '/' || path === '/index.html') {
         if(h2Tags.length > 0 && config.home_title) h2Tags[0].innerText = config.home_title;
         else if(h2Tags.length > 0) h2Tags[0].style.display = 'none';
-
         const introEl = document.getElementById('home-intro');
         if(introEl && config.home_intro) introEl.innerText = config.home_intro;
         else if(introEl) introEl.style.display = 'none';
-
         const container = document.getElementById('home-carousel');
         if(container) container.innerHTML = dados.posts.slice(0, 3).map(p => criarCardPost(p)).join('');
     } else if (path.includes('posts')) {
@@ -67,7 +56,7 @@ async function iniciar() {
 function criarCardPost(post, isCarousel = true) {
     return `<div class="${isCarousel ? 'card' : 'post-item'}">
         <a href="${post.pdf_url || '#'}" target="_blank">
-            <img src="${post.imagem_url || 'https://via.placeholder.com/400x200/eee/999?text=Sem+Imagem'}" alt="Capa do Post">
+            <img src="${post.imagem_url || 'https://via.placeholder.com/400x200/eee/999?text=Sem+Imagem'}" alt="Capa">
             <div class="card-title">${post.titulo}</div>
             <div style="color:#555; font-size:0.9rem;">${post.resumo}</div>
             <div class="card-date">${post.data}</div>
@@ -101,5 +90,4 @@ async function curtir(tabela, id) {
         await supabaseClient.from(tabela).update({ likes: current + 1 }).eq('id', id);
     }
 }
-
 document.addEventListener('DOMContentLoaded', iniciar);
