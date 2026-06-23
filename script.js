@@ -1,7 +1,7 @@
 // ==========================================
-// COLE SUA URL E KEY DO SUPABASE AQUI!
-const SUPABASE_URL = 'https://SEU_PROJETO.supabase.co';
-const SUPABASE_KEY = 'SUA_KEY_ANON_PUBLIC_AQUI';
+// SUAS CREDENCIAIS DO SUPABASE JÁ INSERIDAS!
+const SUPABASE_URL = 'https://vvrjpofqkksemwmqwxyi.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2cmpwb2Zxa2tzZW13bXF3eHlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjUwODIsImV4cCI6MjA5Nzc0MTA4Mn0.0EPKmEfvCscMaWxbXfsou5GestDWDPALJrhshIj9nww';
 // ==========================================
 
 const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
