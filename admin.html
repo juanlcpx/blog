@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Admin - Painel do Blog</title>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Admin</title>
 <style>
     body { font-family: system-ui, sans-serif; max-width: 600px; margin: 2rem auto; padding: 1rem; }
     input, textarea, button { width: 100%; padding: 10px; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
@@ -19,49 +19,49 @@
     </div>
     <div id="admin-panel" class="hidden">
         <h1>Gerenciar Blog</h1><button onclick="logout()" style="background:#d9534f; margin-bottom:2rem;">Sair do Painel</button>
+        <div id="success-box"></div>
+        <button onclick="testarConexao()" style="background: #f0ad4e; color: black;">🧪 DIAGNÓSTICO: Testar Conexão com o Banco</button><br><br>
         
-        <div id="success-box" style="margin-bottom: 1rem;"></div>
-        <button onclick="testarConexao()" style="background: #f0ad4e; color: black;">🧪 Testar Conexão com o Banco</button>
-        <br><br>
-
         <h3>⚙️ Configurações do Blog</h3>
-        <input type="text" id="config-blog-name" placeholder="Nome do Blog (ex: jaun)">
-        <input type="text" id="config-home-title" placeholder="Título da Home (deixe vazio para não aparecer)">
-        <textarea id="config-home-intro" rows="2" placeholder="Texto de introdução da Home"></textarea>
-        <input type="text" id="config-page-posts" placeholder="Título da página de Posts">
-        <input type="text" id="config-page-rascunhos" placeholder="Título da página de Rascunhos">
-        <input type="text" id="config-footer" placeholder="Texto do rodapé (deixe vazio para não aparecer)">
+        <input type="text" id="config-blog-name" placeholder="Nome do Blog"><input type="text" id="config-home-title" placeholder="Título da Home">
+        <textarea id="config-home-intro" rows="2" placeholder="Texto de introdução"></textarea>
+        <input type="text" id="config-page-posts" placeholder="Título de Posts"><input type="text" id="config-page-rascunhos" placeholder="Título de Rascunhos">
+        <input type="text" id="config-footer" placeholder="Texto do rodapé">
         <button onclick="salvarConfiguracoes()" style="background:#2d6a4f; margin-bottom:1rem;">Salvar Configurações</button><hr>
         
         <h3>📝 Adicionar Novo Post</h3>
         <input type="text" id="post-titulo" placeholder="Título do post"><input type="text" id="post-resumo" placeholder="Resumo curto">
         <div class="upload-box"><p>Upload da Imagem (PNG/JPG)</p><input type="file" id="post-imagem" accept="image/*"></div>
-        <div class="upload-box"><p>Upload do PDF (Opcional)</p><input type="file" id="post-pdf" accept=".pdf"></div>
-        <button onclick="salvarPost()">Publicar Post</button><hr style="margin: 2rem 0;">
+        <div class="upload-box"><p>Upload do PDF</p><input type="file" id="post-pdf" accept=".pdf"></div>
+        <button onclick="salvarPost()">Publicar Post</button><hr>
         
         <h3>🧵 Adicionar Novo Rascunho</h3>
         <textarea id="rascunho-texto" rows="3" placeholder="Digite seu texto aqui..."></textarea>
-        <div class="upload-box"><p>Upload de Ilustrações (PNG/JPG)</p><input type="file" id="rascunho-imagens" accept="image/*" multiple></div>
+        <div class="upload-box"><p>Upload de Ilustrações</p><input type="file" id="rascunho-imagens" accept="image/*" multiple></div>
         <button onclick="salvarRascunho()">Publicar Rascunho</button>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // COLE A URL E KEY AQUI TAMBÉM
         const SUPABASE_URL = 'https://vvrjpofqkksemwmqwxyi.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2cmpwb2Zxa2tzZW13bXF3eHlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjUwODIsImV4cCI6MjA5Nzc0MTA4Mn0.0EPKmEfvCscMaWxbXfsou5GestDWDPALJrhshIj9nww';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        function mostrarErro(msg) { const box = document.getElementById('error-box'); box.style.display = 'block'; box.innerText = msg; }
-        function mostrarSucesso(msg) { const box = document.getElementById('success-box'); box.style.display = 'block'; box.innerText = msg; }
-        
+        function mostrarErro(msg) { document.getElementById('error-box').style.display = 'block'; document.getElementById('error-box').innerText = msg; }
+        function mostrarSucesso(msg) { document.getElementById('success-box').style.display = 'block'; document.getElementById('success-box').innerText = msg; }
+
+        // TESTE DE DIAGNÓSTICO - Vai te dizer EXATAMENTE qual o erro
         async function testarConexao() {
-            const { data, error } = await supabaseClient.from('config').select('*').limit(1);
-            if (error) mostrarErro("Erro no banco: " + error.message);
-            else mostrarSucesso("✅ Conectado! Configuração funcionando.");
+            const { data, error } = await supabaseClient.from('posts').select('*').limit(1);
+            if (error) {
+                mostrarErro("❌ ERRO NO SUPABASE: " + error.message + "\nVerifique se a tabela 'posts' foi criada e se a liberação foi feita.");
+            } else {
+                mostrarSucesso("✅ SUCESSO! O Supabase respondeu com " + (data ? data.length : 0) + " posts.");
+            }
         }
 
         async function fazerLogin() {
-            document.getElementById('error-box').style.display = 'none';
-            const { data, error } = await supabaseClient.auth.signInWithPassword({ email: document.getElementById('email').value, password: document.getElementById('senha').value });
+            const { error } = await supabaseClient.auth.signInWithPassword({ email: document.getElementById('email').value, password: document.getElementById('senha').value });
             if (error) { mostrarErro("Erro: " + error.message); return; }
             document.getElementById('login-box').classList.add('hidden'); document.getElementById('admin-panel').classList.remove('hidden');
             carregarConfiguracoesAdmin();
@@ -69,9 +69,9 @@
         function logout() { supabaseClient.auth.signOut(); location.reload(); }
         
         async function carregarConfiguracoesAdmin() {
-            const { data, error } = await supabaseClient.from('config').select('*').eq('id', 1).maybeSingle();
+            const { data } = await supabaseClient.from('config').select('*').eq('id', 1).maybeSingle();
             if (data) {
-                document.getElementById('config-blog-name').value = data.blog_name || 'jaun';
+                document.getElementById('config-blog-name').value = data.blog_name || '';
                 document.getElementById('config-home-title').value = data.home_title || '';
                 document.getElementById('config-home-intro').value = data.home_intro || '';
                 document.getElementById('config-page-posts').value = data.page_title_posts || '';
@@ -79,77 +79,48 @@
                 document.getElementById('config-footer').value = data.footer_text || '';
             }
         }
+        
         async function salvarConfiguracoes() {
-            await supabaseClient.from('config').upsert({ id: 1, blog_name: document.getElementById('config-blog-name').value || 'jaun', home_title: document.getElementById('config-home-title').value, home_intro: document.getElementById('config-home-intro').value, page_title_posts: document.getElementById('config-page-posts').value, page_title_rascunhos: document.getElementById('config-page-rascunhos').value, footer_text: document.getElementById('config-footer').value });
-            alert('Configurações salvas! Vá no Blog, dê um F5.');
+            await supabaseClient.from('config').upsert({ id: 1, blog_name: document.getElementById('config-blog-name').value, home_title: document.getElementById('config-home-title').value, home_intro: document.getElementById('config-home-intro').value, page_title_posts: document.getElementById('config-page-posts').value, page_title_rascunhos: document.getElementById('config-page-rascunhos').value, footer_text: document.getElementById('config-footer').value });
+            alert('Configurações salvas!');
         }
 
         async function salvarPost() {
             let imgUrl='', pdfUrl='';
             const titulo = document.getElementById('post-titulo').value;
             const resumo = document.getElementById('post-resumo').value;
-
-            if(!titulo || !resumo) {
-                alert("Por favor, preencha o Título e o Resumo!");
-                return;
+            if(!titulo) { mostrarErro("Escreva um título!"); return; }
+            
+            if(document.getElementById('post-imagem').files[0]) {
+                const { data, error } = await supabaseClient.storage.from('uploads').upload(`post_${Date.now()}.png`, document.getElementById('post-imagem').files[0]);
+                if(!error){ const { data: url } = supabaseClient.storage.from('uploads').getPublicUrl(data.path); imgUrl = url.publicUrl; }
+                else { mostrarErro("Erro Upload Imagem: " + error.message); return; }
             }
-
-            const fileImg = document.getElementById('post-imagem').files[0];
-            if(fileImg) { 
-                const { data, error } = await supabaseClient.storage.from('uploads').upload(`post_${Date.now()}.png`, fileImg); 
-                if(!error){ const { data: url } = supabaseClient.storage.from('uploads').getPublicUrl(data.path); imgUrl = url.publicUrl; } 
-                else { alert("Erro no upload da imagem: " + error.message); return; }
-            }
-            const filePdf = document.getElementById('post-pdf').files[0];
-            if(filePdf) { 
-                const { data, error } = await supabaseClient.storage.from('uploads').upload(`pdf_${Date.now()}.pdf`, filePdf); 
+            if(document.getElementById('post-pdf').files[0]) {
+                const { data, error } = await supabaseClient.storage.from('uploads').upload(`pdf_${Date.now()}.pdf`, document.getElementById('post-pdf').files[0]);
                 if(!error){ const { data: url } = supabaseClient.storage.from('uploads').getPublicUrl(data.path); pdfUrl = url.publicUrl; }
-                else { alert("Erro no upload do PDF: " + error.message); return; }
+                else { mostrarErro("Erro Upload PDF: " + error.message); return; }
             }
-
-            // AQUI ESTÁ A CORREÇÃO: Verificamos o erro do INSERT!
-            const { data, error } = await supabaseClient.from('posts').insert([{ 
-                titulo: titulo, 
-                resumo: resumo, 
-                imagem_url: imgUrl, 
-                pdf_url: pdfUrl, 
-                data: new Date().toISOString().slice(0,10), 
-                likes: 0 
-            }]);
-
-            if (error) {
-                alert("❌ ERRO REAL DO BANCO DE DADOS: " + error.message + "\n\nProvavelmente a tabela 'posts' não foi criada corretamente. Execute o SQL que eu passei.");
-                return;
-            }
-
-            alert('✅ Post publicado com sucesso! Atualize seu blog e aperte Ctrl+F5.');
+            
+            // VERIFICAÇÃO EXPLÍCITA DE ERRO (AQUI VAI APARECER O ERRO SE TIVER)
+            const { error } = await supabaseClient.from('posts').insert([{ titulo, resumo, imagem_url: imgUrl, pdf_url: pdfUrl, data: new Date().toISOString().slice(0,10), likes: 0 }]);
+            if (error) { mostrarErro("❌ ERRO REAL AO SALVAR: " + error.message); return; }
+            alert('Post publicado!');
         }
 
         async function salvarRascunho() {
-            const texto = document.getElementById('rascunho-texto').value;
-            if(!texto) { alert("Escreva algo no rascunho!"); return; }
-
             let imagensUrls = [];
+            const texto = document.getElementById('rascunho-texto').value;
+            if(!texto) { mostrarErro("Escreva algo no rascunho!"); return; }
+            
             for(let file of document.getElementById('rascunho-imagens').files) {
                 const { data, error } = await supabaseClient.storage.from('uploads').upload(`rasc_${Date.now()}_${file.name}`, file);
                 if(!error) { const { data: url } = supabaseClient.storage.from('uploads').getPublicUrl(data.path); imagensUrls.push(url.publicUrl); }
-                else { alert("Erro no upload da ilustração: " + error.message); return; }
+                else { mostrarErro("Erro Upload Imagem: " + error.message); return; }
             }
-
-            // AQUI ESTÁ A CORREÇÃO: Verificamos o erro do INSERT!
-            const { data, error } = await supabaseClient.from('rascunhos').insert([{ 
-                texto: texto, 
-                imagens: imagensUrls, 
-                data: new Date().toISOString().slice(0,10), 
-                likes: 0 
-            }]);
-
-            if (error) {
-                alert("❌ ERRO REAL DO BANCO DE DADOS: " + error.message + "\n\nProvavelmente a tabela 'rascunhos' não foi criada corretamente.");
-                return;
-            }
-
-            alert('✅ Rascunho publicado com sucesso!');
+            const { error } = await supabaseClient.from('rascunhos').insert([{ texto, imagens: imagensUrls, data: new Date().toISOString().slice(0,10), likes: 0 }]);
+            if (error) { mostrarErro("❌ ERRO REAL AO SALVAR: " + error.message); return; }
+            alert('Rascunho publicado!');
         }
     </script>
 </body></html>
