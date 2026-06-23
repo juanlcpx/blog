@@ -1,28 +1,64 @@
 // ==========================================
-// SUAS CREDENCIAIS DO SUPABASE JÁ INSERIDAS!
 const SUPABASE_URL = 'https://vvrjpofqkksemwmqwxyi.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2cmpwb2Zxa2tzZW13bXF3eHlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjUwODIsImV4cCI6MjA5Nzc0MTA4Mn0.0EPKmEfvCscMaWxbXfsou5GestDWDPALJrhshIj9nww';
 // ==========================================
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+async function carregarConfiguracao() {
+    const { data, error } = await supabaseClient.from('config').select('*').eq('id', 1).single();
+    if (error && error.code === 'PGRST116') return null; // Tabela vazia
+    return data;
+}
 
 async function carregarDados() {
-    const { data: posts } = await supabase.from('posts').select('*').order('data', { ascending: false });
-    const { data: rascunhos } = await supabase.from('rascunhos').select('*').order('data', { ascending: false });
-    return { posts: posts || [], rascunhos: rascunhos || [] };
+    const config = await carregarConfiguracao();
+    const { data: posts } = await supabaseClient.from('posts').select('*').order('data', { ascending: false });
+    const { data: rascunhos } = await supabaseClient.from('rascunhos').select('*').order('data', { ascending: false });
+    return { config, posts: posts || [], rascunhos: rascunhos || [] };
 }
 
 async function iniciar() {
     const dados = await carregarDados();
+    
+    // Se não existir config no banco, usa padrão
+    const config = dados.config || { 
+        blog_name: 'jaun', home_title: 'Últimos Artigos', home_intro: 'Hi, I\'m jaun. Welcome to my scientific blog.', 
+        page_title_posts: 'Posts', page_title_rascunhos: 'Rascunhos', footer_text: '' 
+    };
+    
     const path = window.location.pathname;
+    let pageSuffix = "Home";
+    if (path.includes('posts')) pageSuffix = config.page_title_posts || "Posts";
+    else if (path.includes('rascunhos')) pageSuffix = config.page_title_rascunhos || "Rascunhos";
+    
+    document.title = config.blog_name + " - " + pageSuffix;
 
-    if (path.includes('index') || path === '/' || path === '/index.html') {
+    const siteTitleEl = document.querySelector('.site-title');
+    if(siteTitleEl) siteTitleEl.innerText = config.blog_name;
+
+    const footerEl = document.querySelector('footer p');
+    if(footerEl) footerEl.innerText = config.footer_text || "";
+
+    const h2Tags = document.querySelectorAll('main h2');
+
+    if (path.includes('index') || path === '/') {
+        if(h2Tags.length > 0 && config.home_title) h2Tags[0].innerText = config.home_title;
+        else if(h2Tags.length > 0) h2Tags[0].style.display = 'none';
+
+        const introEl = document.getElementById('home-intro');
+        if(introEl && config.home_intro) introEl.innerText = config.home_intro;
+        else if(introEl) introEl.style.display = 'none';
+
         const container = document.getElementById('home-carousel');
         if(container) container.innerHTML = dados.posts.slice(0, 3).map(p => criarCardPost(p)).join('');
     } else if (path.includes('posts')) {
+        if(h2Tags.length > 0 && config.page_title_posts) h2Tags[0].innerText = config.page_title_posts;
+        else if(h2Tags.length > 0) h2Tags[0].style.display = 'none';
         const container = document.getElementById('all-posts-list');
         if(container) container.innerHTML = dados.posts.map(p => criarCardPost(p, false)).join('');
     } else if (path.includes('rascunhos')) {
+        if(h2Tags.length > 0 && config.page_title_rascunhos) h2Tags[0].innerText = config.page_title_rascunhos;
+        else if(h2Tags.length > 0) h2Tags[0].style.display = 'none';
         const container = document.getElementById('rascunhos-timeline');
         if(container) container.innerHTML = dados.rascunhos.map(r => criarTweetRascunho(r)).join('');
     }
@@ -62,8 +98,7 @@ async function curtir(tabela, id) {
         span.innerText = current + 1;
         localStorage.setItem(`liked_${tabela}_${id}`, true);
         document.querySelector(`button[onclick="curtir('${tabela}', ${id})"]`).classList.add('liked');
-        
-        await supabase.from(tabela).update({ likes: current + 1 }).eq('id', id);
+        await supabaseClient.from(tabela).update({ likes: current + 1 }).eq('id', id);
     }
 }
 
