@@ -1,55 +1,66 @@
 const SUPABASE_URL = 'https://vvrjpofqkksemwmqwxyi.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2cmpwb2Zxa2tzZW13bXF3eHlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjUwODIsImV4cCI6MjA5Nzc0MTA4Mn0.0EPKmEfvCscMaWxbXfsou5GestDWDPALJrhshIj9nww';
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-async function carregarConfiguracao() {
-    const { data, error } = await supabaseClient.from('config').select('*').eq('id', 1).maybeSingle();
-    if (error) console.warn("Erro ao buscar config, usando padrões.", error);
-    return data;
+let supabaseClient;
+
+try {
+    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    console.log("✅ Conexão com Supabase estabelecida!");
+} catch (e) {
+    alert("ERRO GRAVE DE INICIALIZAÇÃO: Verifique suas credenciais da URL e Key. Erro: " + e.message);
 }
 
 async function carregarDados() {
-    const config = await carregarConfiguracao();
-    const { data: posts } = await supabaseClient.from('posts').select('*').order('data', { ascending: false });
-    const { data: rascunhos } = await supabaseClient.from('rascunhos').select('*').order('data', { ascending: false });
-    return { config, posts: posts || [], rascunhos: rascunhos || [] };
-}
+    try {
+        // Busca as configurações
+        const { data: config } = await supabaseClient.from('config').select('*').eq('id', 1).single();
+        
+        // Busca os posts
+        const { data: posts, error: errPosts } = await supabaseClient.from('posts').select('*').order('data', { ascending: false });
+        if (errPosts) {
+            alert("ERRO AO LER OS POSTS: " + errPosts.message + "\n\nCertifique-se de que executou o SQL de liberação e marcou o bucket como público.");
+            return;
+        }
 
-async function iniciar() {
-    const dados = await carregarDados();
-    const config = dados.config || { blog_name: 'jaun', home_title: 'Últimos Artigos', home_intro: 'Hi, I\'m jaun.', page_title_posts: 'Posts', page_title_rascunhos: 'Rascunhos', footer_text: '' };
-    
-    const path = window.location.pathname;
-    let pageSuffix = "Home";
-    if (path.includes('posts')) pageSuffix = config.page_title_posts || "Posts";
-    else if (path.includes('rascunhos')) pageSuffix = config.page_title_rascunhos || "Rascunhos";
-    
-    document.title = config.blog_name + " - " + pageSuffix;
-    const siteTitleEl = document.querySelector('.site-title');
-    if(siteTitleEl) siteTitleEl.innerText = config.blog_name;
-    
-    const footerEl = document.querySelector('footer p');
-    if(footerEl) footerEl.innerText = config.footer_text || "";
+        // Busca os rascunhos
+        const { data: rascunhos, error: errRasc } = await supabaseClient.from('rascunhos').select('*').order('data', { ascending: false });
+        if (errRasc) {
+            alert("ERRO AO LER OS RASCUNHOS: " + errRasc.message);
+            return;
+        }
 
-    const h2Tags = document.querySelectorAll('main h2');
-    if (path.includes('index') || path === '/' || path === '/index.html') {
-        if(h2Tags.length > 0 && config.home_title) h2Tags[0].innerText = config.home_title;
-        else if(h2Tags.length > 0) h2Tags[0].style.display = 'none';
-        const introEl = document.getElementById('home-intro');
-        if(introEl && config.home_intro) introEl.innerText = config.home_intro;
-        else if(introEl) introEl.style.display = 'none';
-        const container = document.getElementById('home-carousel');
-        if(container) container.innerHTML = dados.posts.slice(0, 3).map(p => criarCardPost(p)).join('');
-    } else if (path.includes('posts')) {
-        if(h2Tags.length > 0 && config.page_title_posts) h2Tags[0].innerText = config.page_title_posts;
-        else if(h2Tags.length > 0) h2Tags[0].style.display = 'none';
-        const container = document.getElementById('all-posts-list');
-        if(container) container.innerHTML = dados.posts.map(p => criarCardPost(p, false)).join('');
-    } else if (path.includes('rascunhos')) {
-        if(h2Tags.length > 0 && config.page_title_rascunhos) h2Tags[0].innerText = config.page_title_rascunhos;
-        else if(h2Tags.length > 0) h2Tags[0].style.display = 'none';
-        const container = document.getElementById('rascunhos-timeline');
-        if(container) container.innerHTML = dados.rascunhos.map(r => criarTweetRascunho(r)).join('');
+        // Se chegou aqui, os dados foram puxados!
+        console.log("Posts encontrados:", posts);
+        console.log("Rascunhos encontrados:", rascunhos);
+
+        // --- Renderização das páginas ---
+        const path = window.location.pathname;
+        const padrao = { blog_name: 'jaun', home_title: 'Últimos Artigos', home_intro: 'Hi, I\'m jaun.', page_title_posts: 'Posts', page_title_rascunhos: 'Rascunhos', footer_text: '' };
+        const c = config || padrao;
+        
+        document.title = c.blog_name;
+        const t = document.querySelector('.site-title');
+        if(t) t.innerText = c.blog_name;
+        
+        const f = document.querySelector('footer p');
+        if(f) f.innerText = c.footer_text || "";
+
+        if (path.includes('index') || path === '/') {
+            document.getElementById('page-title').innerText = c.home_title;
+            const intro = document.getElementById('home-intro');
+            if(intro && c.home_intro) intro.innerText = c.home_intro;
+            const container = document.getElementById('home-carousel');
+            if(container && posts.length > 0) container.innerHTML = posts.slice(0,3).map(p => criarCardPost(p)).join('');
+        } else if (path.includes('posts')) {
+            document.getElementById('page-title').innerText = c.page_title_posts;
+            document.getElementById('all-posts-list').innerHTML = posts.map(p => criarCardPost(p, false)).join('');
+        } else if (path.includes('rascunhos')) {
+            document.getElementById('page-title').innerText = c.page_title_rascunhos;
+            document.getElementById('rascunhos-timeline').innerHTML = rascunhos.map(r => criarTweetRascunho(r)).join('');
+        }
+
+    } catch (e) {
+        alert("ERRO GERAL AO EXECUTAR O SCRIPT: " + e.message + "\n\nVerifique o console do navegador (F12) para mais detalhes.");
     }
 }
 
@@ -90,4 +101,4 @@ async function curtir(tabela, id) {
         await supabaseClient.from(tabela).update({ likes: current + 1 }).eq('id', id);
     }
 }
-document.addEventListener('DOMContentLoaded', iniciar);
+document.addEventListener('DOMContentLoaded', carregarDados);
