@@ -6,20 +6,32 @@ const PADRAO = { blog_name: 'jaun', home_title: 'Últimos Artigos', home_intro: 
 
 async function iniciar() {
     try {
-        // Busca config (se falhar, usa o padrão)
+        console.log("🔎 Iniciando o blog...");
+        
+        // 1. Buscar Config
         let config = PADRAO;
-        const { data } = await supabaseClient.from('config').select('*').eq('id', 1).maybeSingle();
-        if (data) config = data;
+        const { data: cData } = await supabaseClient.from('config').select('*').eq('id', 1).maybeSingle();
+        if (cData) config = cData;
 
-        // Busca dados (SE FOR NULL, TRANSFORMA EM ARRAY VAZIO PARA NÃO QUEBRAR)
-        const { data: posts } = await supabaseClient.from('posts').select('*').order('data', { ascending: false });
-        const { data: rascunhos } = await supabaseClient.from('rascunhos').select('*').order('data', { ascending: false });
+        // 2. Buscar Posts (SE FOR NULL, VIRA UM ARRAY VAZIO)
+        const { data: pData, error: pError } = await supabaseClient.from('posts').select('*').order('data', { ascending: false });
+        if (pError) console.error("❌ Erro na tabela Posts:", pError.message);
+        const posts = pData || [];
+        
+        // 3. Buscar Rascunhos (SE FOR NULL, VIRA UM ARRAY VAZIO)
+        const { data: rData, error: rError } = await supabaseClient.from('rascunhos').select('*').order('data', { ascending: false });
+        if (rError) console.error("❌ Erro na tabela Rascunhos:", rError.message);
+        const rascunhos = rData || [];
 
-        // CORREÇÃO AQUI: Garantir que posts e rascunhos nunca sejam null
-        const postsArray = posts || [];
-        const rascunhosArray = rascunhos || [];
+        // 4. Verifica se as tabelas estão funcionando
+        if (pError && pError.message.includes("does not exist")) {
+            alert("🚨 ERRO CRÍTICO: A tabela 'posts' não existe no Supabase. Você esqueceu de executar o SQL no Supabase Editor!");
+            return;
+        }
 
-        // Atualiza DOM
+        console.log(`✅ Blog carregado: ${posts.length} posts e ${rascunhos.length} rascunhos.`);
+
+        // --- EXIBIR NA TELA ---
         document.title = config.blog_name;
         const t = document.querySelector('.site-title');
         if(t) t.innerText = config.blog_name;
@@ -33,22 +45,40 @@ async function iniciar() {
             document.getElementById('page-title').innerText = config.home_title;
             const intro = document.getElementById('home-intro');
             if(intro && config.home_intro) intro.innerText = config.home_intro;
+            
             const container = document.getElementById('home-carousel');
-            if(container && postsArray.length > 0) container.innerHTML = postsArray.slice(0,3).map(p => criarCardPost(p)).join('');
-            else if(container) container.innerHTML = "<p style='color:#888;'>Nenhum post publicado ainda. Vá no admin!</p>";
+            if(container) {
+                if (posts.length > 0) {
+                    container.innerHTML = posts.slice(0, 3).map(p => criarCardPost(p)).join('');
+                } else {
+                    container.innerHTML = "<p style='color:#888;'>Nenhum post publicado ainda. Vá no admin!</p>";
+                }
+            }
         } else if (path.includes('posts')) {
             document.getElementById('page-title').innerText = config.page_title_posts;
             const container = document.getElementById('all-posts-list');
-            if(container && postsArray.length > 0) container.innerHTML = postsArray.map(p => criarCardPost(p, false)).join('');
-            else if(container) container.innerHTML = "<p style='color:#888;'>Nenhum post publicado ainda.</p>";
+            if(container) {
+                if (posts.length > 0) {
+                    container.innerHTML = posts.map(p => criarCardPost(p, false)).join('');
+                } else {
+                    container.innerHTML = "<p style='color:#888;'>Nenhum post publicado ainda.</p>";
+                }
+            }
         } else if (path.includes('rascunhos')) {
             document.getElementById('page-title').innerText = config.page_title_rascunhos;
             const container = document.getElementById('rascunhos-timeline');
-            if(container && rascunhosArray.length > 0) container.innerHTML = rascunhosArray.map(r => criarTweetRascunho(r)).join('');
-            else if(container) container.innerHTML = "<p style='color:#888;'>Nenhum rascunho postado ainda.</p>";
+            if(container) {
+                if (rascunhos.length > 0) {
+                    container.innerHTML = rascunhos.map(r => criarTweetRascunho(r)).join('');
+                } else {
+                    container.innerHTML = "<p style='color:#888;'>Nenhum rascunho postado ainda.</p>";
+                }
+            }
         }
+
     } catch (e) {
-        alert("Erro geral detectado! Verifique o console (F12). Erro: " + e.message);
+        alert("🚨 ERRO GERAL NO BLOG! Verifique o console (F12) > Console. Erro: " + e.message);
+        console.error("Erro completo:", e);
     }
 }
 
