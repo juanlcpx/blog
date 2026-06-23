@@ -1,57 +1,31 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-    font-family: system-ui, -apple-system, sans-serif; line-height: 1.6;
-    max-width: 700px; margin: 0 auto; padding: 2rem 1.5rem;
-    background: #ffffff; color: #222;
-}
+body { font-family: system-ui, sans-serif; line-height: 1.6; max-width: 700px; margin: 0 auto; padding: 2rem 1.5rem; background: #ffffff; color: #222; }
 a { color: #2d6a4f; text-decoration: none; }
 header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; border-bottom: 1px solid #eaeaea; padding-bottom: 1rem; }
 .site-title { font-size: 1.6rem; font-weight: 700; color: #1b4332; }
-nav a { margin-left: 1.5rem; font-size: 1.1rem; }
-nav a:hover { text-decoration: underline; }
+nav a { margin-left: 1.5rem; font-size: 1.1rem; } nav a:hover { text-decoration: underline; }
 h2 { font-size: 2rem; color: #1b4332; margin-bottom: 1.5rem; }
-
-/* Cards e Carrossel Home */
-.carousel { display: flex; gap: 1.5rem; overflow-x: auto; padding-bottom: 1rem; scroll-snap-type: x mandatory; scrollbar-width: thin; }
-.carousel::-webkit-scrollbar { height: 8px; }
-.carousel::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
-.card {
-    flex: 0 0 80%; background: #f9f9f9; border-radius: 12px; padding: 1.5rem;
-    border: 1px solid #eaeaea; scroll-snap-align: start;
-    display: flex; flex-direction: column; gap: 0.8rem;
-}
+.home-intro { font-size: 1.1rem; margin-bottom: 2rem; color: #444; }
+.carousel { display: flex; gap: 1.5rem; overflow-x: auto; padding-bottom: 1rem; scroll-snap-type: x mandatory; }
+.carousel::-webkit-scrollbar { height: 8px; } .carousel::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+.card { flex: 0 0 80%; background: #f9f9f9; border-radius: 12px; padding: 1.5rem; border: 1px solid #eaeaea; scroll-snap-align: start; }
 .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 .card a { display: flex; flex-direction: column; gap: 0.8rem; color: inherit; }
 .card img { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; background: #eee; }
-.card-title { font-size: 1.2rem; font-weight: 600; color: #1b4332; line-height: 1.3; }
+.card-title { font-size: 1.2rem; font-weight: 600; color: #1b4332; }
 .card-summary { font-size: 0.95rem; color: #555; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .card-date { font-size: 0.85rem; color: #888; }
 @media (min-width: 600px) { .card { flex: 0 0 48%; } }
-
-/* Lista de Posts */
 #all-posts-list .post-item { padding: 1rem 0; border-bottom: 1px solid #eee; }
 #all-posts-list .post-item a { display: flex; flex-direction: column; gap: 0.3rem; color: inherit; }
 #all-posts-list .post-item img { width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 0.5rem; }
-
-/* Estilo dos Rascunhos (Timeline / Tweet) */
 #rascunhos-timeline { display: flex; flex-direction: column; gap: 2rem; }
-.rascunho-card {
-    background: #f7f7f7; border-radius: 16px; padding: 1.5rem;
-    border: 1px solid #e0e0e0; position: relative;
-}
-.rascunho-card::before { content: ''; position: absolute; left: -20px; top: 20px; width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-right: 10px solid #f7f7f7; }
+.rascunho-card { background: #f7f7f7; border-radius: 16px; padding: 1.5rem; border: 1px solid #e0e0e0; position: relative; }
 .rascunho-text { font-size: 1rem; margin-bottom: 1rem; }
 .rascunho-imgs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
 .rascunho-imgs img { max-width: 100%; border-radius: 8px; max-height: 200px; }
 .rascunho-date { font-size: 0.8rem; color: #888; display: block; }
-
-/* Botão Curtir (Like) */
-.like-btn {
-    display: inline-block; background: #fff; padding: 0.3rem 0.8rem; border-radius: 20px;
-    border: 1px solid #ddd; cursor: pointer; font-size: 0.9rem; margin-top: 0.5rem;
-    color: #444; transition: 0.2s;
-}
+.like-btn { display: inline-block; background: #fff; padding: 0.3rem 0.8rem; border-radius: 20px; border: 1px solid #ddd; cursor: pointer; font-size: 0.9rem; margin-top: 0.5rem; color: #444; transition: 0.2s; }
 .like-btn:hover { background: #f1f1f1; border-color: #2d6a4f; }
 .like-btn.liked { background: #2d6a4f; color: white; border-color: #2d6a4f; }
-
 footer { margin-top: 4rem; border-top: 1px solid #ddd; padding-top: 1.5rem; text-align: center; font-size: 0.8rem; color: #888; }
