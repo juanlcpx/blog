@@ -1,37 +1,29 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Painel do Blog</title>
-    <style>
-        body { font-family: system-ui, sans-serif; max-width: 600px; margin: 2rem auto; padding: 1rem; }
-        input, textarea, button { width: 100%; padding: 10px; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-        button { background: #1b4332; color: white; font-weight: bold; cursor: pointer; border: none; }
-        button:hover { background: #2d6a4f; }
-        .hidden { display: none; }
-        .upload-box { border: 2px dashed #ccc; padding: 20px; text-align: center; margin-bottom: 1rem; border-radius: 8px; background: #f9f9f9; }
-        #login-box { border: 1px solid #ddd; padding: 2rem; border-radius: 12px; background: #fcfcfc; }
-        #error-box { display: none; background: #ffebeb; color: #d9534f; border: 1px solid #d9534f; padding: 10px; border-radius: 8px; margin-top: 10px; }
-        h3 { margin-top: 2rem; }
-    </style>
-</head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Admin - Painel do Blog</title>
+<style>
+    body { font-family: system-ui, sans-serif; max-width: 600px; margin: 2rem auto; padding: 1rem; }
+    input, textarea, button { width: 100%; padding: 10px; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
+    button { background: #1b4332; color: white; font-weight: bold; cursor: pointer; border: none; }
+    button:hover { background: #2d6a4f; }
+    .hidden { display: none; }
+    .upload-box { border: 2px dashed #ccc; padding: 20px; text-align: center; margin-bottom: 1rem; border-radius: 8px; background: #f9f9f9; }
+    #login-box { border: 1px solid #ddd; padding: 2rem; border-radius: 12px; background: #fcfcfc; }
+    #error-box { display: none; background: #ffebeb; color: #d9534f; border: 1px solid #d9534f; padding: 10px; border-radius: 8px; margin-top: 10px; }
+    #success-box { display: none; background: #ebffeb; color: #2d6a4f; border: 1px solid #2d6a4f; padding: 10px; border-radius: 8px; margin-top: 10px; }
+    h3 { margin-top: 2rem; }
+</style></head>
 <body>
-    <!-- LOGIN -->
-    <div id="login-box">
-        <h2>Login do Admin</h2>
-        <div id="error-box"></div>
-        <input type="email" id="email" placeholder="Seu e-mail">
-        <input type="password" id="senha" placeholder="Sua senha">
-        <button onclick="fazerLogin()">Entrar</button>
+    <div id="login-box"><h2>Login do Admin</h2><div id="error-box"></div>
+        <input type="email" id="email" placeholder="Seu e-mail"><input type="password" id="senha" placeholder="Sua senha"><button onclick="fazerLogin()">Entrar</button>
     </div>
-
-    <!-- ADMIN -->
     <div id="admin-panel" class="hidden">
-        <h1>Gerenciar Blog</h1>
-        <button onclick="logout()" style="background:#d9534f; margin-bottom:2rem;">Sair do Painel</button>
+        <h1>Gerenciar Blog</h1><button onclick="logout()" style="background:#d9534f; margin-bottom:2rem;">Sair do Painel</button>
+        
+        <div id="success-box" style="margin-bottom: 1rem;"></div>
+        <button onclick="testarConexao()" style="background: #f0ad4e; color: black;">🧪 Testar Conexão com o Banco</button>
+        <br><br>
 
-        <!-- SEÇÃO DE CONFIGURAÇÕES (EDITAR TUDO) -->
         <h3>⚙️ Configurações do Blog</h3>
         <input type="text" id="config-blog-name" placeholder="Nome do Blog (ex: jaun)">
         <input type="text" id="config-home-title" placeholder="Título da Home (deixe vazio para não aparecer)">
@@ -39,65 +31,45 @@
         <input type="text" id="config-page-posts" placeholder="Título da página de Posts">
         <input type="text" id="config-page-rascunhos" placeholder="Título da página de Rascunhos">
         <input type="text" id="config-footer" placeholder="Texto do rodapé (deixe vazio para não aparecer)">
-        <button onclick="salvarConfiguracoes()" style="background:#2d6a4f; margin-bottom:1rem;">Salvar Configurações</button>
-        <hr>
-
-        <!-- POSTS -->
+        <button onclick="salvarConfiguracoes()" style="background:#2d6a4f; margin-bottom:1rem;">Salvar Configurações</button><hr>
+        
         <h3>📝 Adicionar Novo Post</h3>
-        <input type="text" id="post-titulo" placeholder="Título do post">
-        <input type="text" id="post-resumo" placeholder="Resumo curto">
-        <div class="upload-box">
-            <p>Upload da Imagem (PNG/JPG)</p>
-            <input type="file" id="post-imagem" accept="image/*">
-        </div>
-        <div class="upload-box">
-            <p>Upload do PDF (Opcional)</p>
-            <input type="file" id="post-pdf" accept=".pdf">
-        </div>
-        <button onclick="salvarPost()">Publicar Post</button>
-        <hr style="margin: 2rem 0;">
-
-        <!-- RASCUNHOS -->
+        <input type="text" id="post-titulo" placeholder="Título do post"><input type="text" id="post-resumo" placeholder="Resumo curto">
+        <div class="upload-box"><p>Upload da Imagem (PNG/JPG)</p><input type="file" id="post-imagem" accept="image/*"></div>
+        <div class="upload-box"><p>Upload do PDF (Opcional)</p><input type="file" id="post-pdf" accept=".pdf"></div>
+        <button onclick="salvarPost()">Publicar Post</button><hr style="margin: 2rem 0;">
+        
         <h3>🧵 Adicionar Novo Rascunho</h3>
         <textarea id="rascunho-texto" rows="3" placeholder="Digite seu texto aqui..."></textarea>
-        <div class="upload-box">
-            <p>Upload de Ilustrações (PNG/JPG)</p>
-            <input type="file" id="rascunho-imagens" accept="image/*" multiple>
-        </div>
+        <div class="upload-box"><p>Upload de Ilustrações (PNG/JPG)</p><input type="file" id="rascunho-imagens" accept="image/*" multiple></div>
         <button onclick="salvarRascunho()">Publicar Rascunho</button>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const SUPABASE_URL = 'https://vvrjpofqkksemwmqwxyi.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2cmpwb2Zxa2tzZW13bXF3eHlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjUwODIsImV4cCI6MjA5Nzc0MTA4Mn0.0EPKmEfvCscMaWxbXfsou5GestDWDPALJrhshIj9nww';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        function mostrarErro(msg) {
-            const box = document.getElementById('error-box');
-            box.style.display = 'block'; box.innerText = msg;
+        function mostrarErro(msg) { const box = document.getElementById('error-box'); box.style.display = 'block'; box.innerText = msg; }
+        function mostrarSucesso(msg) { const box = document.getElementById('success-box'); box.style.display = 'block'; box.innerText = msg; }
+        
+        async function testarConexao() {
+            const { data, error } = await supabaseClient.from('config').select('*').limit(1);
+            if (error) mostrarErro("Erro no banco: " + error.message);
+            else mostrarSucesso("✅ Conectado! Configuração funcionando.");
         }
 
         async function fazerLogin() {
             document.getElementById('error-box').style.display = 'none';
-            const email = document.getElementById('email').value;
-            const senha = document.getElementById('senha').value;
-            if(!email || !senha) { mostrarErro("Preencha e-mail e senha."); return; }
-            try {
-                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: senha });
-                if (error) { mostrarErro("Erro: " + error.message); return; }
-                if(!data.user) { mostrarErro("Usuário não encontrado no Supabase."); return; }
-                document.getElementById('login-box').classList.add('hidden');
-                document.getElementById('admin-panel').classList.remove('hidden');
-                carregarConfiguracoesAdmin(); // Carrega as configs assim que logar
-            } catch (e) { mostrarErro("Erro de conexão: " + e.message); }
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email: document.getElementById('email').value, password: document.getElementById('senha').value });
+            if (error) { mostrarErro("Erro: " + error.message); return; }
+            document.getElementById('login-box').classList.add('hidden'); document.getElementById('admin-panel').classList.remove('hidden');
+            carregarConfiguracoesAdmin();
         }
-
         function logout() { supabaseClient.auth.signOut(); location.reload(); }
-
-        // --- FUNÇÕES DE CONFIGURAÇÃO ---
+        
         async function carregarConfiguracoesAdmin() {
-            const { data, error } = await supabaseClient.from('config').select('*').eq('id', 1).single();
+            const { data, error } = await supabaseClient.from('config').select('*').eq('id', 1).maybeSingle();
             if (data) {
                 document.getElementById('config-blog-name').value = data.blog_name || 'jaun';
                 document.getElementById('config-home-title').value = data.home_title || '';
@@ -107,57 +79,77 @@
                 document.getElementById('config-footer').value = data.footer_text || '';
             }
         }
-
         async function salvarConfiguracoes() {
-            await supabaseClient.from('config').upsert({ 
-                id: 1, 
-                blog_name: document.getElementById('config-blog-name').value || 'jaun',
-                home_title: document.getElementById('config-home-title').value,
-                home_intro: document.getElementById('config-home-intro').value,
-                page_title_posts: document.getElementById('config-page-posts').value,
-                page_title_rascunhos: document.getElementById('config-page-rascunhos').value,
-                footer_text: document.getElementById('config-footer').value
-            });
-            alert('Configurações salvas! Vá no Blog, dê um F5 e veja as mudanças.');
+            await supabaseClient.from('config').upsert({ id: 1, blog_name: document.getElementById('config-blog-name').value || 'jaun', home_title: document.getElementById('config-home-title').value, home_intro: document.getElementById('config-home-intro').value, page_title_posts: document.getElementById('config-page-posts').value, page_title_rascunhos: document.getElementById('config-page-rascunhos').value, footer_text: document.getElementById('config-footer').value });
+            alert('Configurações salvas! Vá no Blog, dê um F5.');
         }
 
-        // --- FUNÇÕES DE POSTAGEM ---
         async function salvarPost() {
+            let imgUrl='', pdfUrl='';
             const titulo = document.getElementById('post-titulo').value;
             const resumo = document.getElementById('post-resumo').value;
-            let imgUrl = '', pdfUrl = '';
+
+            if(!titulo || !resumo) {
+                alert("Por favor, preencha o Título e o Resumo!");
+                return;
+            }
+
             const fileImg = document.getElementById('post-imagem').files[0];
-            if(fileImg) {
-                const { data, error } = await supabaseClient.storage.from('uploads').upload(`post_img_${Date.now()}.png`, fileImg);
-                if(!error) { const { data: url } = supabaseClient.storage.from('uploads').getPublicUrl(data.path); imgUrl = url.publicUrl; }
+            if(fileImg) { 
+                const { data, error } = await supabaseClient.storage.from('uploads').upload(`post_${Date.now()}.png`, fileImg); 
+                if(!error){ const { data: url } = supabaseClient.storage.from('uploads').getPublicUrl(data.path); imgUrl = url.publicUrl; } 
+                else { alert("Erro no upload da imagem: " + error.message); return; }
             }
             const filePdf = document.getElementById('post-pdf').files[0];
-            if(filePdf) {
-                const { data, error } = await supabaseClient.storage.from('uploads').upload(`post_pdf_${Date.now()}.pdf`, filePdf);
-                if(!error) { const { data: url } = supabaseClient.storage.from('uploads').getPublicUrl(data.path); pdfUrl = url.publicUrl; }
+            if(filePdf) { 
+                const { data, error } = await supabaseClient.storage.from('uploads').upload(`pdf_${Date.now()}.pdf`, filePdf); 
+                if(!error){ const { data: url } = supabaseClient.storage.from('uploads').getPublicUrl(data.path); pdfUrl = url.publicUrl; }
+                else { alert("Erro no upload do PDF: " + error.message); return; }
             }
-            const hoje = new Date().toISOString().slice(0,10);
-            await supabaseClient.from('posts').insert([{ titulo, resumo, imagem_url: imgUrl, pdf_url: pdfUrl, data: hoje, likes: 0 }]);
-            alert('Post publicado! Atualize seu blog.');
-            location.reload();
+
+            // AQUI ESTÁ A CORREÇÃO: Verificamos o erro do INSERT!
+            const { data, error } = await supabaseClient.from('posts').insert([{ 
+                titulo: titulo, 
+                resumo: resumo, 
+                imagem_url: imgUrl, 
+                pdf_url: pdfUrl, 
+                data: new Date().toISOString().slice(0,10), 
+                likes: 0 
+            }]);
+
+            if (error) {
+                alert("❌ ERRO REAL DO BANCO DE DADOS: " + error.message + "\n\nProvavelmente a tabela 'posts' não foi criada corretamente. Execute o SQL que eu passei.");
+                return;
+            }
+
+            alert('✅ Post publicado com sucesso! Atualize seu blog e aperte Ctrl+F5.');
         }
 
         async function salvarRascunho() {
             const texto = document.getElementById('rascunho-texto').value;
+            if(!texto) { alert("Escreva algo no rascunho!"); return; }
+
             let imagensUrls = [];
-            const files = document.getElementById('rascunho-imagens').files;
-            for(let file of files) {
-                const { data, error } = await supabaseClient.storage.from('uploads').upload(`rasc_img_${Date.now()}_${file.name}`, file);
-                if(!error) {
-                    const { data: url } = supabaseClient.storage.from('uploads').getPublicUrl(data.path);
-                    imagensUrls.push(url.publicUrl);
-                }
+            for(let file of document.getElementById('rascunho-imagens').files) {
+                const { data, error } = await supabaseClient.storage.from('uploads').upload(`rasc_${Date.now()}_${file.name}`, file);
+                if(!error) { const { data: url } = supabaseClient.storage.from('uploads').getPublicUrl(data.path); imagensUrls.push(url.publicUrl); }
+                else { alert("Erro no upload da ilustração: " + error.message); return; }
             }
-            const hoje = new Date().toISOString().slice(0,10);
-            await supabaseClient.from('rascunhos').insert([{ texto, imagens: imagensUrls, data: hoje, likes: 0 }]);
-            alert('Rascunho publicado!');
-            location.reload();
+
+            // AQUI ESTÁ A CORREÇÃO: Verificamos o erro do INSERT!
+            const { data, error } = await supabaseClient.from('rascunhos').insert([{ 
+                texto: texto, 
+                imagens: imagensUrls, 
+                data: new Date().toISOString().slice(0,10), 
+                likes: 0 
+            }]);
+
+            if (error) {
+                alert("❌ ERRO REAL DO BANCO DE DADOS: " + error.message + "\n\nProvavelmente a tabela 'rascunhos' não foi criada corretamente.");
+                return;
+            }
+
+            alert('✅ Rascunho publicado com sucesso!');
         }
     </script>
-</body>
-</html>
+</body></html>
