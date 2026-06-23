@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head><title>Diagnóstico</title></head>
+<body>
+    <h1>Diagnóstico do Blog</h1>
+    <div id="resultado" style="font-family: monospace; background: #f0f0f0; padding: 20px;"></div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://vvrjpofqkksemwmqwxyi.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2cmpwb2Zxa2tzZW13bXF3eHlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjUwODIsImV4cCI6MjA5Nzc0MTA4Mn0.0EPKmEfvCscMaWxbXfsou5GestDWDPALJrhshIj9nww';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function testar() {
+            const el = document.getElementById('resultado');
+            el.innerHTML = "🔎 Conectando ao Supabase...";
+
+            const { data: config } = await supabaseClient.from('config').select('*').maybeSingle();
+            const { data: posts, error: errP } = await supabaseClient.from('posts').select('*');
+            const { data: rascunhos, error: errR } = await supabaseClient.from('rascunhos').select('*');
+
+            let html = "";
+            if (errP || errR) {
+                html += `<p style="color:red;">❌ ERRO NO BANCO: ${errP?.message || errR?.message}</p>`;
+            } else {
+                html += `<p style="color:green;">✅ Conectado!</p>`;
+                html += `<p><strong>Posts encontrados:</strong> ${posts.length}</p>`;
+                html += `<p><strong>Rascunhos encontrados:</strong> ${rascunhos.length}</p>`;
+                html += `<pre>${JSON.stringify(posts, null, 2)}</pre>`;
+            }
+            el.innerHTML = html;
+        }
+        window.onload = testar;
+    </script>
+</body>
+</html>
