@@ -12,12 +12,14 @@
         .hidden { display: none; }
         .upload-box { border: 2px dashed #ccc; padding: 20px; text-align: center; margin-bottom: 1rem; border-radius: 8px; background: #f9f9f9; }
         #login-box { border: 1px solid #ddd; padding: 2rem; border-radius: 12px; background: #fcfcfc; }
+        #error-box { display: none; background: #ffebeb; color: #d9534f; border: 1px solid #d9534f; padding: 10px; border-radius: 8px; margin-top: 10px; }
     </style>
 </head>
 <body>
     <!-- TELA DE LOGIN -->
     <div id="login-box">
         <h2>Login do Admin</h2>
+        <div id="error-box"></div>
         <input type="email" id="email" placeholder="Seu e-mail do Supabase">
         <input type="password" id="senha" placeholder="Sua senha">
         <button onclick="fazerLogin()">Entrar</button>
@@ -55,20 +57,52 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // ==========================================
-        // SUAS CREDENCIAIS DO SUPABASE JÁ INSERIDAS!
+        // SUAS CREDENCIAIS (JÁ CORRETAS)
         const SUPABASE_URL = 'https://vvrjpofqkksemwmqwxyi.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2cmpwb2Zxa2tzZW13bXF3eHlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjUwODIsImV4cCI6MjA5Nzc0MTA4Mn0.0EPKmEfvCscMaWxbXfsou5GestDWDPALJrhshIj9nww';
         // ==========================================
 
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        function mostrarErro(msg) {
+            const box = document.getElementById('error-box');
+            box.style.display = 'block';
+            box.innerText = msg;
+        }
+
         async function fazerLogin() {
+            document.getElementById('error-box').style.display = 'none'; // Limpa erro antigo
+            
             const email = document.getElementById('email').value;
             const senha = document.getElementById('senha').value;
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password: senha });
-            if (error) { alert('Erro no login: ' + error.message); return; }
-            document.getElementById('login-box').classList.add('hidden');
-            document.getElementById('admin-panel').classList.remove('hidden');
+            
+            if(!email || !senha) {
+                mostrarErro("Por favor, preencha o e-mail e a senha.");
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password: senha });
+                
+                if (error) {
+                    mostrarErro("Erro do Supabase: " + error.message);
+                    console.error("Detalhes do erro:", error);
+                    return;
+                }
+
+                if(!data.user) {
+                    mostrarErro("Usuário não encontrado. Você criou o usuário no painel do Supabase? (Authentication > Users)");
+                    return;
+                }
+
+                // Se chegou aqui, deu certo!
+                document.getElementById('login-box').classList.add('hidden');
+                document.getElementById('admin-panel').classList.remove('hidden');
+
+            } catch (e) {
+                mostrarErro("Erro de conexão ou código: " + e.message);
+                console.error("Erro inesperado:", e);
+            }
         }
 
         function logout() { supabase.auth.signOut(); location.reload(); }
